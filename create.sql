@@ -1,38 +1,7 @@
-CREATE TABLE corsi(
-    codice INT NOT NULL UNIQUE AUTO_INCREMENT,
-    titolo VARCHAR(50) NOT NULL, 
-    descrizione VARCHAR(255),
-    cfu INT NOT NULL,
-    programma VARCHAR(255),
-    codice_orario INT NOT NULL,
-    FOREIGN KEY (codice_orario) REFERENCES orari(codice),
-    PRIMARY KEY (codice)
-);
+CREATE TABLE corsi(codice INTEGER NOT NULL UNIQUE, titolo TEXT NOT NULL, descrizione TEXT, cfu INTEGER NOT NULL, programma TEXT, codice_orario INTEGER NOT NULL, FOREIGN KEY (codice_orario) REFERENCES orari(codice), PRIMARY KEY (codice));
 
-CREATE TABLE orari (
-    codice INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    lunedi VARCHAR(50),
-    martedi VARCHAR(50),
-    mercoledi VARCHAR(50),
-    giovedi VARCHAR(50),
-    venerdi VARCHAR(50),    
-);
+CREATE TABLE orari (codice INTEGER NOT NULL PRIMARY KEY , lunedi TEXT, martedi TEXT, mercoledi TEXT, giovedi TEXT, venerdi TEXT);
 
-CREATE TABLE utenti(
-    username VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL,
-    cognome VARCHAR(50) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    corso_di_studio VARCHAR(50),
-    FOREIGN KEY(id_studio) REFERENCES studi_psicologia(id),
-);
+CREATE TABLE utenti(username TEXT NOT NULL UNIQUE PRIMARY KEY, nome TEXT NOT NULL, cognome TEXT NOT NULL, password TEXT NOT NULL, corso_di_studio TEXT);
 
-CREATE TABLE frequentare (
-    id INT NOT NULL PRIMARY KEY UNIQUE AUTO_INCREMENT,
-    username VARCHAR(50) NOT NULL,
-    codice_corso INT NOT NULL,
-    aula VARCHAR(50), 
-    FOREIGN KEY (username) REFERENCES utenti(username),
-    FOREIGN KEY (codice_corso) REFERENCES corsi(codice),
-    PRIMARY KEY (id)
-);
+CREATE TABLE frequentare (id INTEGER NOT NULL UNIQUE , username TEXT NOT NULL, codice_corso INTEGER NOT NULL, aula TEXT,  FOREIGN KEY (username) REFERENCES utenti(username), FOREIGN KEY (codice_corso) REFERENCES corsi(codice), PRIMARY KEY (id));
