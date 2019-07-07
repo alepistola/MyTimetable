@@ -54,10 +54,40 @@ app.get('/', function(request, response) {
 // endpoint to get all the dreams in the database
 // currently this is the only endpoint, ie. adding dreams won't update the database
 // read the sqlite3 module docs and try to add your own! https://www.npmjs.com/package/sqlite3
-app.get('/getDreams', function(request, response) {
-  db.all('SELECT * from Dreams', function(err, rows) {
+app.get('/utenti', function(request, response) {
+  db.all('select * from utenti', function(err, rows) {
     response.send(JSON.stringify(rows));
   });
+});
+
+app.get('/utenti/:username', function(request, response) {
+  const user = '"' + request.params.username + '"';
+  var sql = 'select * from utenti where username = ';
+  var sql = sql + user;
+  console.log(sql);
+  db.get(sql, function(err, row) {
+    response.statusCode = 200;
+    response.send(JSON.stringify(row));
+  });
+});
+
+app.post('/utenti', function(request, response) {
+  var username = request.body.username;
+  var nome = request.body.nome;
+  var cognome = request.body.cognome;
+  var password = request.body.password;
+  var corso_di_studio = request.body.corsodistudio;
+  var sql2 = 'INSERT INTO utenti (username, nome, cognome, password, corso_di_studio) VALUES ("'+ username + '", "'+ nome +'", "'+ cognome +'", "'+ password +'", "' + corso_di_studio + '")';
+  console.log(sql2);
+  db.run(), function(err) {
+    if (err) {
+      response.statusCode = 500;
+      return console.log(err.message);
+    }
+    // get the last insert id
+    response.statusCode = 201;
+    console.log('A row has been inserted with rowid ${this.lastID}');
+  };
 });
 
 // listen for requests :)
