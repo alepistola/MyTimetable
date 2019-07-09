@@ -20,7 +20,7 @@ var exists = fs.existsSync(dbFile);
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database(dbFile);
 
-// if ./.data/sqlite.db does not exist, create it, otherwise print records to console
+// if ./.data/mytimetable.db does not exist, create it, otherwise print records to console
 db.serialize(function(){
   if (!exists) {
     db.run('CREATE TABLE corsi(codice INTEGER NOT NULL UNIQUE, titolo TEXT NOT NULL, descrizione TEXT, cfu INTEGER NOT NULL, programma TEXT, codice_orario INTEGER NOT NULL, FOREIGN KEY (codice_orario) REFERENCES orari(codice), PRIMARY KEY (codice));');
@@ -30,7 +30,7 @@ db.serialize(function(){
 
     console.log('New tables created!');
     
-    // insert default dreams
+    // insert default user
     db.serialize(function() {
       db.run('INSERT INTO utenti (username, nome, cognome, password, corso_di_studio) VALUES ("alepistola", "Alessandro", "Pistola", "password", "Informatica applicata")');
     });
@@ -51,15 +51,16 @@ app.get('/', function(request, response) {
   //response.sendFile(__dirname + '/views/index.html');
 });
 
-// endpoint to get all the dreams in the database
-// currently this is the only endpoint, ie. adding dreams won't update the database
-// read the sqlite3 module docs and try to add your own! https://www.npmjs.com/package/sqlite3
+// endpoints list
+// GESTIONE UTENTI
+// get -> show user list
 app.get('/utenti', function(request, response) {
   db.all('select * from utenti', function(err, rows) {
     response.send(JSON.stringify(rows));
   });
 });
 
+// get -> show single user
 app.get('/utenti/:username', function(request, response) {
   const user = '"' + request.params.username + '"';
   var sql = 'select * from utenti where username = ';
@@ -70,6 +71,7 @@ app.get('/utenti/:username', function(request, response) {
   });
 });
 
+// post -> insert
 app.post('/utenti', function(request, response) {
   var username = request.body.username;
   var nome = request.body.nome;
@@ -86,6 +88,39 @@ app.post('/utenti', function(request, response) {
     response.status(201).end();
     return console.log('A row has been inserted with username ' + username);
   });
+});
+
+// put -> update specific user
+app.put('/utenti/:username', function(request, response) {
+  const username = '"' + request.params.username + '"';
+  var new_user = request.body.username;
+  var nome = request.body.nome;
+  var cognome = request.body.cognome;
+  var password = request.body.password;
+  var corso_di_studio = request.body.corsodistudio;
+  var sql3 = 'SELECT username FROM utenti WHERE username = '+ username +';';
+  if(username !== undefined){
+    console.log("Ottenuta richiesta di modifica dell'account: " + username + "\nCon le seguenti nuove informazioni: username->" + new_user + ", nome->" + nome + ", cognome->" + cognome + ", password->" + password + ", corso di studio-> " + corso_di_studio );
+    db.get(sql3, function(err) {
+      if (err) {
+        response.status(304).end();
+        return console.log(err.message);
+      }
+      var sql4 = 'UPDATE utenti SET username=' + new_user + ', nome=' + nome + ', cognome=' + cognome + ', password=' + password + ', corso_di_studio=' + corso_di_studio + ' WHERE username=' + username +';';
+      db.run(sql4, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql4 + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }
 });
 
 // listen for requests :)
