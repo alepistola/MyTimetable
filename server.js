@@ -123,6 +123,81 @@ app.put('/utenti/:username', function(request, response) {
   }
 });
 
+
+// ENDPOINT GESTIONE CORSO
+// get -> show user list
+app.get('/corsi', function(request, response) {
+  db.all('select * from corsi', function(err, rows) {
+    response.send(JSON.stringify(rows));
+  });
+});
+
+// get -> show single course
+app.get('/corsi/:codice', function(request, response) {
+  const codice = '"' + request.params.codicee + '"';
+  var sql = 'select * from corsi where codice = ';
+  var sql = sql + codice;
+  console.log(sql);
+  db.get(sql, function(err, row) {
+    response.status(200).send(JSON.stringify(row));
+  });
+});
+
+// post -> insert
+app.post('/corsi', function(request, response) {
+  var codice = request.body.codice;
+  var titolo = request.body.titolo;
+  var descrizione = request.body.descrizione;
+  var cfu = request.body.cfu;
+  var programma = request.body.programma;
+  var codice_orario = request.body.codice_orario;
+  var sql2 = 'INSERT INTO corsi (codice, titolo, descrizione, cfu, programma, codice_orario) VALUES ('+ codice + ', '+ titolo +', '+ descrizione +', '+ cfu +', ' + programma + ', ' + codice_orario + ')';
+  console.log(sql2);
+  db.run(sql2, function(err) {
+    if (err) {
+      response.status(500).end();
+      return console.log(err.message);
+    }
+    response.status(201).end();
+    return console.log('A row has been inserted with codice ' + codice);
+  });
+});
+
+// put -> update specific course
+app.put('/corsi/:codice', function(request, response) {
+  const codice = '"' + request.params.codice + '"';
+  var new_codice = request.body.new_codice;
+  var titolo = request.body.titolo;
+  var descrizione = request.body.descrizione;
+  var cfu = request.body.cfu;
+  var programma = request.body.programma;
+  var codice_orario = request.body.codice_orario;
+  var sql3 = 'SELECT codice FROM corsi WHERE codice = '+ codice +';';
+  if(codice !== undefined){
+    console.log("Ottenuta richiesta di modifica del corso: " + codice + "\nCon le seguenti nuove informazioni: codice->" + new_codice + ", titolo->" + titolo + ", descrizione->" + descrizione + ", cfu->" + cfu + ", programma->" + programma + ", codice di orario-> " + codice_orario);
+    db.get(sql3, function(err) {
+      if (err) {
+        response.status(304).end();
+        return console.log(err.message);
+      }
+      var sql4 = 'UPDATE corsi SET codice=' + new_codice + ', titolo=' + titolo + ', descrizione=' + descrizione + ', cfu=' + cfu + ', programma=' + programma + ', codice_orario=' + codice_orario + ' WHERE codice=' + codice +';';
+      db.run(sql4, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql4 + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }
+});
+
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
