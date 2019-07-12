@@ -355,6 +355,49 @@ app.delete('/orari/:codice', function(request, response){
 });
 
 
+app.get('/frequentare/:username', function(req, res) {
+  const username = '"' + req.params.username + '"';
+  var passwd = "";
+  // recupero la relativa password
+  if(username !== null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" + username;
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  var auth = req.headers['authorization'];
+  if(auth){
+    var creds = auth.split(' ')[1];
+    var decoded = new Buffer(creds, 'base64').toString();
+    const [login, password] = decoded.split(':');
+    
+    if(login == username && password == passwd) {
+      let sql = "SELECT * FROM frequentare WHERE username_studente=" + username;
+      db.get(sql, function(err, row) {
+        if (err) {
+          res.status(404).end();
+          return console.log(err.message);
+        }
+        res.status(200).send(JSON.stringify(row)).end();
+        return;
+      })   
+    }
+  }
+  res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+});
+
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
