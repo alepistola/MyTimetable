@@ -86,7 +86,7 @@ app.post('/utenti', function(request, response) {
       return console.log(err.message);
     }
     response.status(201).end();
-    return console.log('A row has been inserted with username ' + username);
+    return console.log('Aggiunto utente ' + username);
   });
 });
 
@@ -113,7 +113,7 @@ app.put('/utenti/:username', function(request, response) {
           return console.log(sql4 + "\n" + err.message);
         }
         response.status(202).end()
-        return console.log("Operazione eseguita con successo");
+        return console.log("Operazione di aggiornamento eseguita con successo");
       })
     });
   }
@@ -121,6 +121,34 @@ app.put('/utenti/:username', function(request, response) {
   {
     response.status(304).end();
   }
+});
+
+app.delete('/utenti/:username', function(request, response){
+    const username = '"' + request.params.username + '"';
+    var sql3 = 'SELECT username, nome, cognome FROM utenti WHERE username = '+ username +';';
+    if(username !== undefined){
+      db.get(sql3, function(err, row) {
+        if (err) {
+          console.log("Ottenuta richiesta di rimozione dell'account: " + username + "inesistente");
+          response.status(404).end();
+          return console.log(err.message);
+        }
+        console.log("Ottenuta richiesta di rimozione dell'account: " + username + " ("+ row.nome + " " + row.cognome + ")");
+        var sql_del = "DELETE FROM utenti WHERE username =" + username;
+        db.run(sql_del, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql_del + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione di rimozione eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }   
 });
 
 
@@ -195,6 +223,34 @@ app.put('/corsi/:codice', function(request, response) {
   {
     response.status(304).end();
   }
+});
+
+app.delete('/corsi/:codice', function(request, response){
+    const codice = '"' + request.params.codice + '"';
+    var sql_del = 'SELECT codice, titolo FROM corsi WHERE codice = '+ codice +';';
+    if(codice !== undefined){
+      db.get(sql_del, function(err, row) {
+        if (err) {
+          console.log("Ottenuta richiesta di rimozione del corso con codice: " + codice + "inesistente");
+          response.status(404).end();
+          return console.log(err.message);
+        }
+        console.log("Ottenuta richiesta di rimozione del corso: " + row.titolo + " ("+ codice + ")");
+        var sql_del = "DELETE FROM corsi WHERE codice =" + codice;
+        db.run(sql_del, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql_del + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione di rimozione eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }   
 });
 
 
