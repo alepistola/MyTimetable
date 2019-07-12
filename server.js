@@ -162,7 +162,7 @@ app.get('/corsi', function(request, response) {
 
 // get -> show single course
 app.get('/corsi/:codice', function(request, response) {
-  const codice = '"' + request.params.codicee + '"';
+  const codice = '"' + request.params.codice + '"';
   var sql = 'select * from corsi where codice = ';
   var sql = sql + codice;
   console.log(sql);
@@ -237,6 +237,107 @@ app.delete('/corsi/:codice', function(request, response){
         }
         console.log("Ottenuta richiesta di rimozione del corso: " + row.titolo + " ("+ codice + ")");
         var sql_del = "DELETE FROM corsi WHERE codice =" + codice;
+        db.run(sql_del, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql_del + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione di rimozione eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }   
+});
+
+// ENDPOINT GESTIONE ORARIO
+// get -> show time list
+app.get('/orari', function(request, response) {
+  db.all('select * from orari', function(err, rows) {
+    response.send(JSON.stringify(rows));
+  });
+});
+
+// get -> show single time
+app.get('/orari/:codice', function(request, response) {
+  const codice = '"' + request.params.codice + '"';
+  var sql = 'select * from orari where codice = ';
+  var sql = sql + codice;
+  console.log(sql);
+  db.get(sql, function(err, row) {
+    response.status(200).send(JSON.stringify(row));
+  });
+});
+
+// post -> insert
+app.post('/orari', function(request, response) {
+  var codice = request.body.codice;
+  var lunedi = request.body.lunedi;
+  var martedi = request.body.martedi;
+  var mercoledi = request.body.mercoledi;
+  var giovedi = request.body.giovedi;
+  var venerdi = request.body.venerdi;
+  var sql2 = 'INSERT INTO corsi (codice, lunedi, martedi, mercoledi, giovedi, venerdi) VALUES ('+ codice + ', '+ lunedi +', '+ martedi +', '+ mercoledi +', ' + giovedi + ', ' + venerdi + ')';
+  console.log(sql2);
+  db.run(sql2, function(err) {
+    if (err) {
+      response.status(500).end();
+      return console.log(err.message);
+    }
+    response.status(201).end();
+    return console.log('Inserito orario con codice ' + codice);
+  });
+});
+
+// put -> update specific time
+app.put('/orari/:codice', function(request, response) {
+  const codice = '"' + request.params.codice + '"';
+  var new_codice = request.body.new_codice;
+  var lunedi = request.body.lunedi;
+  var martedi = request.body.martedi;
+  var mercoledi = request.body.mercoledi;
+  var giovedi = request.body.giovedi;
+  var venerdi = request.body.venerdi;
+  var sql3 = 'SELECT codice FROM orari WHERE codice = '+ codice +';';
+  if(codice !== undefined){
+    console.log("Ottenuta richiesta di modifica dell'orario con codice: " + codice);
+    db.get(sql3, function(err) {
+      if (err) {
+        response.status(304).end();
+        return console.log(err.message);
+      }
+      var sql4 = 'UPDATE orari SET codice=' + new_codice + ', lunedi=' + lunedi + ', martedi=' + martedi + ', mercoledi=' + mercoledi + ', giovedi=' + giovedi + ', venerdi=' + venerdi + ' WHERE codice=' + codice +';';
+      db.run(sql4, function(err) {
+        if (err) {
+          response.status(304).end();
+          return console.log(sql4 + "\n" + err.message);
+        }
+        response.status(202).end()
+        return console.log("Operazione di aggiornamento eseguita con successo");
+      })
+    });
+  }
+  else
+  {
+    response.status(304).end();
+  }
+});
+
+app.delete('/orari/:codice', function(request, response){
+    const codice = '"' + request.params.codice + '"';
+    var sql_del = 'SELECT codice FROM orari WHERE codice = '+ codice +';';
+    if(codice !== undefined){
+      db.get(sql_del, function(err, row) {
+        if (err) {
+          console.log("Ottenuta richiesta di rimozione dell'orario con codice: " + codice + "inesistente");
+          response.status(404).end();
+          return console.log(err.message);
+        }
+        console.log("Ottenuta richiesta di rimozione dell'orario con codice: " + codice);
+        var sql_del = "DELETE FROM orari WHERE codice =" + codice;
         db.run(sql_del, function(err) {
         if (err) {
           response.status(304).end();
