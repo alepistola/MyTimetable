@@ -77,9 +77,21 @@ app.post('/utenti', function(request, response) {
   var nome = request.body.nome;
   var cognome = request.body.cognome;
   var password = request.body.password;
-  var corso_di_studio = request.body.corsodistudio;
+  var corso_di_studio = request.body.corso_di_studio;
+  var sql1 = "SELECT COUNT(username) FROM utenti WHERE username=" + username;
+  db.get(sql1, function(err, row){
+    if(err)
+      {
+        response.status(500).end();
+        return console.log(err.message);
+      }
+  var num = JSON.parse(row);
+  console.log(num);
+  response.status(201).end();
+  });
   var sql2 = 'INSERT INTO utenti (username, nome, cognome, password, corso_di_studio) VALUES ('+ username + ', '+ nome +', '+ cognome +', '+ password +', ' + corso_di_studio + ')';
   console.log(sql2);
+  /*
   db.run(sql2, function(err) {
     if (err) {
       response.status(500).end();
@@ -87,7 +99,7 @@ app.post('/utenti', function(request, response) {
     }
     response.status(201).end();
     return console.log('Aggiunto utente ' + username);
-  });
+  });*/
 });
 
 // put -> update specific user
@@ -97,7 +109,7 @@ app.put('/utenti/:username', function(request, response) {
   var nome = request.body.nome;
   var cognome = request.body.cognome;
   var password = request.body.password;
-  var corso_di_studio = request.body.corsodistudio;
+  var corso_di_studio = request.body.corso_di_studio;
   var sql3 = 'SELECT username FROM utenti WHERE username = '+ username +';';
   if(username !== undefined){
     console.log("Ottenuta richiesta di modifica dell'account: " + username + "\nCon le seguenti nuove informazioni: username->" + new_user + ", nome->" + nome + ", cognome->" + cognome + ", password->" + password + ", corso di studio-> " + corso_di_studio );
@@ -354,7 +366,8 @@ app.delete('/orari/:codice', function(request, response){
   }   
 });
 
-
+// ENDPOINT frequentare
+// get -> show list of associations belong to specific user
 app.get('/frequentare/:username', function(req, res) {
   const username = '"' + req.params.username + '"';
   var passwd = "";
@@ -397,6 +410,49 @@ app.get('/frequentare/:username', function(req, res) {
   res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
 });
 
+// post -> create an association between user and course
+/*app.post('/frequentare/:username', function(req, res) {
+  const username = '"' + req.params.username + '"';
+  var passwd = "";
+  // recupero la relativa password
+  if(username !== null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" + username;
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  var auth = req.headers['authorization'];
+  if(auth){
+    var creds = auth.split(' ')[1];
+    var decoded = new Buffer(creds, 'base64').toString();
+    const [login, password] = decoded.split(':');
+    
+    if(login == username && password == passwd) {
+      let sql = "SELECT * FROM frequentare WHERE username_studente=" + username;
+      db.get(sql, function(err, row) {
+        if (err) {
+          res.status(404).end();
+          return console.log(err.message);
+        }
+        res.status(200).send(JSON.stringify(row)).end();
+        return;
+      })   
+    }
+  }
+  res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+});
+*/
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
