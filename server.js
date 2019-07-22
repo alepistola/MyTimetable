@@ -410,10 +410,14 @@ app.get('/frequentare/:username', function(req, res) {
   res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
 });
 
+
 // post -> create an association between user and course
 /*app.post('/frequentare/:username', function(req, res) {
   const username = '"' + req.params.username + '"';
   var passwd = "";
+  var codice_corso = req.body.codice_corso;
+  var aula = req.body.aula;
+  
   // recupero la relativa password
   if(username !== null)
   {
@@ -430,6 +434,7 @@ app.get('/frequentare/:username', function(req, res) {
   }
   else
   {
+    console.log("username non valido");
     res.status(400).end();
   }
   var auth = req.headers['authorization'];
@@ -439,7 +444,7 @@ app.get('/frequentare/:username', function(req, res) {
     const [login, password] = decoded.split(':');
     
     if(login == username && password == passwd) {
-      let sql = "SELECT * FROM frequentare WHERE username_studente=" + username;
+      let sql = "";
       db.get(sql, function(err, row) {
         if (err) {
           res.status(404).end();
