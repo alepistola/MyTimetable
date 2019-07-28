@@ -369,12 +369,12 @@ app.delete('/orari/:codice', function(request, response){
 // ENDPOINT frequentare
 // get -> show list of associations belong to specific user
 app.get('/frequentare/:username', function(req, res) {
-  const username = '"' + req.params.username + '"';
+  const username = req.params.username;
   var passwd = "";
   // recupero la relativa password
   if(username !== null)
   {
-    var sql = "SELECT password FROM utenti WHERE username=" + username;
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
     db.get(sql, function(err, row) {
       if (err) {
         console.log("Ottenuta richiesta con username: " + username + "inesistente");
@@ -383,33 +383,36 @@ app.get('/frequentare/:username', function(req, res) {
       }
       passwd = row.password;
       console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        console.log(login + "==" + username + "&&" + password + "==" + passwd);
+        if(login == username && password == passwd) {
+          let sql2 = "SELECT * FROM frequentare WHERE username = " + "'" + login + "'";
+          db.get(sql2, function(errs, row) {
+            if (errs) {
+              res.status(404).end();
+              return console.log(errs.message);
+            }
+            res.send(JSON.stringify(row)).end();
+            return;
+          })   
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
     })     
   }
   else
   {
     res.status(400).end();
   }
-  var auth = req.headers['authorization'];
-  if(auth){
-    var creds = auth.split(' ')[1];
-    var decoded = new Buffer(creds, 'base64').toString();
-    const [login, password] = decoded.split(':');
-    
-    if(login == username && password == passwd) {
-      let sql = "SELECT * FROM frequentare WHERE username_studente=" + username;
-      db.get(sql, function(err, row) {
-        if (err) {
-          res.status(404).end();
-          return console.log(err.message);
-        }
-        res.status(200).send(JSON.stringify(row)).end();
-        return;
-      })   
-    }
-  }
-  res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+  
 });
-
 
 // post -> create an association between user and course
 /*app.post('/frequentare/:username', function(req, res) {
