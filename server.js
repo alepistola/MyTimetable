@@ -383,21 +383,24 @@ app.get('/frequentare/:username', function(req, res) {
       }
       passwd = row.password;
       console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
       var auth = req.headers['authorization'];
       if(auth){
         var creds = auth.split(' ')[1];
         var decoded = new Buffer(creds, 'base64').toString();
         const [login, password] = decoded.split(':');
         if(login == username && password == passwd) {
+          // ottengo i risultati
           let sql2 = "SELECT * FROM frequentare WHERE username = " + "'" + login + "'";
-          db.get(sql2, function(errs, row) {
-            if (errs) {
+          db.all(sql2, function(err, rows) {
+            if (err) {
               res.status(404).end();
-              return console.log(errs.message);
+              return console.log(err.message);
             }
-            res.send(JSON.stringify(row)).end();
+            console.log(rows + " || " + sql2);
+            res.status(200).send(JSON.stringify(rows)).end();
             return;
-          })   
+          });   
         }
       }
       else
@@ -419,40 +422,73 @@ app.get('/frequentare/:username', function(req, res) {
 // 1-Autentica l'utente
 // 2-Controlla se esiste il corso
 // 3-Effettua l'associazione
-
-app.post('/frequentare/:username', function(req, res) {
-  const username = '"' + req.params.username + '"';
-  var codice_corso = req.body.codice_corso;
   
-  var auth = authenticate(req, res);
-  console.log(auth);
-  if(auth == 2)
-    res.status(401).send("User not exists").end();
-  else if(auth == 3)
-    res.status(404).send("User not specified").end();
-  else if(auth == undefined)
-    res.status(500).send("Server error, try later").end();
-  else
-    {
-      var ex = existsCourse(req, res);
-      if(ex == 2)
-        res.status(401).send("Course not exists").end();
-      else if(ex == 3)
-        res.status(404).send("Course not specified").end();
+// using x-www-form-urlencoded !!
+ app.post('/frequentare/:username', function(req, res) {
+  var passwd = "";
+  const username = req.params.username;
+  var codice_corso = req.body['codice_corso'];
+  var aula = req.body['aula']; 
+  // recupero la relativa password
+  if(username != null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste il codice del corso
+          if(codice_corso != null)
+          {
+            let sql1 = "SELECT codice FROM corsi WHERE codice = " + codice_corso ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Codice_corso: " + codice_corso + "inesistente");
+                res.status(500).send("Codice corso inesistente").end();
+                return console.log(err.message);
+              }
+              // effettuo l'associazione
+              if(aula != null)
+              {
+                let sql2 = "INSERT INTO frequentare (username, codice_corso, aula) VALUES ('"+ username +" ', "+ codice_corso +", '"+ aula + "')";
+                console.log(sql2);
+                db.run(sql2, function(err) {
+                  if (err) {
+                    res.status(500).send("Errore nell'inserimento dell'associazione").end();
+                    return console.log(err.message);
+                  }
+                res.status(201).send("Associazione inserita con successo").end();
+                });
+              }
+            });
+          }    
+          else
+            res.status(404).send("Codice corso inesistente").end();
+        }
+      }
       else
         {
-          var room = (req.body.aula == undefined) ? "" : req.body.aula;
-          var result = toAttend(username, codice_corso, room);
-          if(result == 2)
-            res.status(500).send("SQL error on insert").end();
-          else if(result == 1)
-            res.status(201).send('Associazione effettuata ccorrettamente').end();
-          else
-            res.status(500).end();
-        }      
-    }
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  
 });
-
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
@@ -460,46 +496,7 @@ var listener = app.listen(process.env.PORT, function() {
 });
 
   
-// return 1 -> auth ok
-// return 2 -> user not exists
-// return 3 -> user not specified
-function authenticate(req, res)
-{  
-  const username = req.params.username;
-  var passwd = "";
-  var toRet;
-  
-  if(username == null)
-  {
-    toRet = 3
-  }
-  else
-  {
-    var sql = "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
-    db.get(sql, function(err, row) {
-      if (err) {
-        console.log("Ottenuta richiesta con username: " + username + "inesistente");
-        toRet = 2;
-        return console.log(err.message);
-      }
-      passwd = row.password;
-      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
-    });
-    var auth = req.headers['authorization'];
-    if(auth){
-      var creds = auth.split(' ')[1];
-      var decoded = new Buffer(creds, 'base64').toString();
-      const [login, password] = decoded.split(':');
 
-      if(login == username && password == passwd) { toRet = 1 }
-    }
-    else
-    {
-        res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
-    }
-  }
-  return toRet;
-}
 
 
 // return 1 -> course exists
