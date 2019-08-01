@@ -490,6 +490,95 @@ app.get('/frequentare/:username', function(req, res) {
   
 });
 
+
+// post -> update an association between user and course
+// 1-Autentica l'utente
+// 2-Controlla se esiste il l'associazione
+// 3-Effettua la modificaa dell'associazione
+  
+// using x-www-form-urlencoded !!
+ app.put('/frequentare/:username', function(req, res) {
+  var passwd = "";
+  const username = req.params.username;
+  var codice_corso = req.body['codice_corso'];
+  var aula = (req.body['aula'] != undefined) ? req.body['aula'] : ""; 
+  var id = req.body['id'];
+  // recupero la relativa password
+  if(username != null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste l'associazione
+          if(id != null)
+          {
+            let sql1 = "SELECT id FROM frequentare WHERE id = " + id ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Id associazione: " + id + "inesistente");
+                res.status(500).send("Id associazione inesistente").end();
+                return console.log(err.message);
+              }
+              // controllo se esiste il nuovo corso
+              if(codice_corso != null)
+              {
+                let sql1 = "SELECT codice FROM corsi WHERE codice = " + codice_corso ;
+                db.get(sql1, function(err, row) {
+                  if (err) {
+                    console.log("Codice_corso: " + codice_corso + "inesistente");
+                    res.status(500).send("Codice corso inesistente").end();
+                    return console.log(err.message);
+                  }
+                  // effettuo l'update
+                  let sql2 = "UPDATE frequentare SET username='" + username + "', codice_corso=" + codice_corso + ", aula='" + aula + "'" + " WHERE id =" + id;
+                  console.log(sql2);
+                  db.run(sql2, function(err) {
+                    if (err) {
+                      res.status(304).end();
+                      return console.log(err.message);
+                    }
+                    res.status(202).send("Operazione di aggiornamento eseguita con successo").end()
+                    return console.log("Operazione di aggiornamento eseguita con successo");
+                  });
+                });
+              }
+              else
+              {
+                res.status(404).send("Il nuovo codice è invalido").end();
+                return console.log(err.message);
+              }
+            });
+          }    
+          else
+            res.status(404).send("Codice corso inesistente").end();
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  
+});
+
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
