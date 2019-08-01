@@ -77,9 +77,21 @@ app.post('/utenti', function(request, response) {
   var nome = request.body.nome;
   var cognome = request.body.cognome;
   var password = request.body.password;
-  var corso_di_studio = request.body.corsodistudio;
+  var corso_di_studio = request.body.corso_di_studio;
+  var sql1 = "SELECT COUNT(username) FROM utenti WHERE username=" + username;
+  db.get(sql1, function(err, row){
+    if(err)
+      {
+        response.status(500).end();
+        return console.log(err.message);
+      }
+  var num = JSON.parse(row);
+  console.log(num);
+  response.status(201).end();
+  });
   var sql2 = 'INSERT INTO utenti (username, nome, cognome, password, corso_di_studio) VALUES ('+ username + ', '+ nome +', '+ cognome +', '+ password +', ' + corso_di_studio + ')';
   console.log(sql2);
+  /*
   db.run(sql2, function(err) {
     if (err) {
       response.status(500).end();
@@ -87,7 +99,7 @@ app.post('/utenti', function(request, response) {
     }
     response.status(201).end();
     return console.log('Aggiunto utente ' + username);
-  });
+  });*/
 });
 
 // put -> update specific user
@@ -97,7 +109,7 @@ app.put('/utenti/:username', function(request, response) {
   var nome = request.body.nome;
   var cognome = request.body.cognome;
   var password = request.body.password;
-  var corso_di_studio = request.body.corsodistudio;
+  var corso_di_studio = request.body.corso_di_studio;
   var sql3 = 'SELECT username FROM utenti WHERE username = '+ username +';';
   if(username !== undefined){
     console.log("Ottenuta richiesta di modifica dell'account: " + username + "\nCon le seguenti nuove informazioni: username->" + new_user + ", nome->" + nome + ", cognome->" + cognome + ", password->" + password + ", corso di studio-> " + corso_di_studio );
@@ -354,8 +366,328 @@ app.delete('/orari/:codice', function(request, response){
   }   
 });
 
+// ENDPOINT frequentare
+// get -> show list of associations belong to specific user
+app.get('/frequentare/:username', function(req, res) {
+  const username = req.params.username;
+  var passwd = "";
+  // recupero la relativa password
+  if(username !== null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // ottengo i risultati
+          let sql2 = "SELECT * FROM frequentare WHERE username = " + "'" + login + "'";
+          db.all(sql2, function(err, rows) {
+            if (err) {
+              res.status(404).end();
+              return console.log(err.message);
+            }
+            console.log(rows + " || " + sql2);
+            res.status(200).send(JSON.stringify(rows)).end();
+            return;
+          });   
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  
+});
+
+
+
+// post -> create an association between user and course
+// 1-Autentica l'utente
+// 2-Controlla se esiste il corso
+// 3-Effettua l'associazione
+  
+// using x-www-form-urlencoded !!
+ app.post('/frequentare/:username', function(req, res) {
+  var passwd = "";
+  const username = req.params.username;
+  var codice_corso = req.body['codice_corso'];
+  var aula = req.body['aula']; 
+  // recupero la relativa password
+  if(username != null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste il codice del corso
+          if(codice_corso != null)
+          {
+            let sql1 = "SELECT codice FROM corsi WHERE codice = " + codice_corso ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Codice_corso: " + codice_corso + "inesistente");
+                res.status(500).send("Codice corso inesistente").end();
+                return console.log(err.message);
+              }
+              // effettuo l'associazione
+              if(aula != null)
+              {
+                let sql2 = "INSERT INTO frequentare (username, codice_corso, aula) VALUES ('"+ username +"', "+ codice_corso +", '"+ aula + "')";
+                console.log(sql2);
+                db.run(sql2, function(err) {
+                  if (err) {
+                    res.status(500).send("Errore nell'inserimento dell'associazione").end();
+                    return console.log(err.message);
+                  }
+                res.status(201).send("Associazione inserita con successo").end();
+                });
+              }
+            });
+          }    
+          else
+            res.status(404).send("Codice corso inesistente").end();
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  
+});
+
+
+// post -> update an association between user and course
+// 1-Autentica l'utente
+// 2-Controlla se esiste il l'associazione
+// 3-Effettua la modificaa dell'associazione
+  
+// using x-www-form-urlencoded !!
+ app.put('/frequentare/:username', function(req, res) {
+  var passwd = "";
+  const username = req.params.username;
+  var codice_corso = req.body['codice_corso'];
+  var aula = (req.body['aula'] != undefined) ? req.body['aula'] : ""; 
+  var id = req.body['id'];
+  // recupero la relativa password
+  if(username != null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste l'associazione
+          if(id != null)
+          {
+            let sql1 = "SELECT id FROM frequentare WHERE id = " + id ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Id associazione: " + id + "inesistente");
+                res.status(500).send("Id associazione inesistente").end();
+                return console.log(err.message);
+              }
+              // controllo se esiste il nuovo corso
+              if(codice_corso != null)
+              {
+                let sql1 = "SELECT codice FROM corsi WHERE codice = " + codice_corso ;
+                db.get(sql1, function(err, row) {
+                  if (err) {
+                    console.log("Codice_corso: " + codice_corso + "inesistente");
+                    res.status(500).send("Codice corso inesistente").end();
+                    return console.log(err.message);
+                  }
+                  // effettuo l'update
+                  let sql2 = "UPDATE frequentare SET username='" + username + "', codice_corso=" + codice_corso + ", aula='" + aula + "'" + " WHERE id =" + id;
+                  console.log(sql2);
+                  db.run(sql2, function(err) {
+                    if (err) {
+                      res.status(304).end();
+                      return console.log(err.message);
+                    }
+                    res.status(202).send("Operazione di aggiornamento eseguita con successo").end()
+                    return console.log("Operazione di aggiornamento eseguita con successo");
+                  });
+                });
+              }
+              else
+              {
+                res.status(404).send("Il nuovo codice è invalido").end();
+                return console.log(err.message);
+              }
+            });
+          }    
+          else
+            res.status(404).send("Id associazione inesistente").end();
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }  
+});
+
+
+// ENDPOINT frequentare
+// delete -> delete specific association
+app.delete('/frequentare/:username', function(req, res) {
+  const username = req.params.username;
+  const id = req.body['id'];
+  var passwd = "";
+  // recupero la relativa password
+  if(username !== null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste l'associazione
+          let sql1 = "SELECT id FROM frequentare WHERE id = " + id ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Id associazione: " + id + "inesistente");
+                res.status(500).send("Id associazione inesistente").end();
+                return console.log(err.message);
+              }
+              // id esistente -> elimino
+              let sql2 = "DELETE FROM frequentare WHERE id =" + id;
+              db.run(sql2, function(err) {
+                if (err) {
+                  res.status(304).end();
+                  return console.log(err.message);
+                }
+                res.status(202).send("Operazione di elimina eseguita con successo").end()
+                return console.log("Operazione di elimina eseguita con successo");
+              });
+            });
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }
+  
+});
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
 });
+
+  
+
+
+
+// return 1 -> course exists
+// return 2 -> course non exists
+// return 3 -> course not specified
+function existsCourse(req, res)
+{
+  var codice_corso = req.body.codice_corso;
+  var toRet;
+  
+  if(codice_corso != null)
+  {
+    let sql1 = "SELECT codice FROM corsi WHERE codice = " + codice_corso;
+    db.get(sql1, function(err, row) {
+      if (err) {
+        console.log("Codice_corso: " + codice_corso + "inesistente");
+        toRet = 2;
+        return console.log(err.message);
+      }
+      toRet = 1;
+    });
+  }
+  else
+    toRet = 3;
+  
+  return toRet;
+}
+
+
+// return -> 1 ok    
+// return 2 -> error sql       
+function toAttend(user, code, room, res)
+{
+  var toRet;
+  let sql2 = 'INSERT INTO frequentare (username_studente, codice_corso, aula) VALUES ('+ user + ', '+ code +', '+ room + ')';
+  console.log(sql2);
+  db.run(sql2, function(err) {
+    if (err) {
+      toRet = 2;
+    }
+    toRet = 1;
+  });
+  
+  return toRet;
+}
+
