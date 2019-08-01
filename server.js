@@ -563,7 +563,66 @@ app.get('/frequentare/:username', function(req, res) {
             });
           }    
           else
-            res.status(404).send("Codice corso inesistente").end();
+            res.status(404).send("Id associazione inesistente").end();
+        }
+      }
+      else
+        {
+          res.status(401).set("WWW-Authenticate", "Basic").send("You need to authenticate in order to access this info").end();
+        }
+    })     
+  }
+  else
+  {
+    res.status(400).end();
+  }  
+});
+
+
+// ENDPOINT frequentare
+// delete -> delete specific association
+app.delete('/frequentare/:username', function(req, res) {
+  const username = req.params.username;
+  const id = req.body['id'];
+  var passwd = "";
+  // recupero la relativa password
+  if(username !== null)
+  {
+    var sql = "SELECT password FROM utenti WHERE username=" +  "'" + username + "'";
+    db.get(sql, function(err, row) {
+      if (err) {
+        console.log("Ottenuta richiesta con username: " + username + "inesistente");
+        res.status(404).end();
+        return console.log(err.message);
+      }
+      passwd = row.password;
+      console.log("Ottenuta richiesta di visualizzazione da parte di: " + username);
+      // richiedo autorizzazione
+      var auth = req.headers['authorization'];
+      if(auth){
+        var creds = auth.split(' ')[1];
+        var decoded = new Buffer(creds, 'base64').toString();
+        const [login, password] = decoded.split(':');
+        if(login == username && password == passwd) {
+          // controllo se esiste l'associazione
+          let sql1 = "SELECT id FROM frequentare WHERE id = " + id ;
+            db.get(sql1, function(err, row) {
+              if (err) {
+                console.log("Id associazione: " + id + "inesistente");
+                res.status(500).send("Id associazione inesistente").end();
+                return console.log(err.message);
+              }
+              // id esistente -> elimino
+              let sql2 = "DELETE FROM frequentare WHERE id =" + id;
+              db.run(sql2, function(err) {
+                if (err) {
+                  res.status(304).end();
+                  return console.log(err.message);
+                }
+                res.status(202).send("Operazione di elimina eseguita con successo").end()
+                return console.log("Operazione di elimina eseguita con successo");
+              });
+            });
         }
       }
       else
