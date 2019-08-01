@@ -461,7 +461,7 @@ app.get('/frequentare/:username', function(req, res) {
               // effettuo l'associazione
               if(aula != null)
               {
-                let sql2 = "INSERT INTO frequentare (username, codice_corso, aula) VALUES ('"+ username +" ', "+ codice_corso +", '"+ aula + "')";
+                let sql2 = "INSERT INTO frequentare (username, codice_corso, aula) VALUES ('"+ username +"', "+ codice_corso +", '"+ aula + "')";
                 console.log(sql2);
                 db.run(sql2, function(err) {
                   if (err) {
