@@ -68,8 +68,11 @@ app.get("/", function(request, response) {
 // get -> show user list
 app.get("/utenti", function(request, response) {
   db.all("select * from utenti", function(err, rows) {
-    if(err){
-      response.status(500).send(sql_error).end();
+    if (err) {
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
     }
     response.status(200);
     response.send(JSON.stringify(rows));
@@ -84,7 +87,10 @@ app.get("/utenti/:username", function(request, response) {
   console.log(sql);
   db.get(sql, function(err, row) {
     if (err) {
-      response.status(500).send(sql_error).end();
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
       return console.log(err.message);
     }
     response.status(200).send(JSON.stringify(row));
@@ -103,7 +109,10 @@ app.post("/utenti", function(request, response) {
   console.log(sql1);
   db.get(sql1, function(err, row) {
     if (err) {
-      response.status(500).send(sql_error).end();
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
       return console.log(err.message);
     }
     var num = row["COUNT(username)"];
@@ -122,7 +131,10 @@ app.post("/utenti", function(request, response) {
         ")";
       db.run(sql2, function(err) {
         if (err) {
-          response.status(500).send(sql_error).end();
+          response
+            .status(500)
+            .send(sql_error)
+            .end();
           return console.log(err.message);
         }
         response.status(201).end();
@@ -164,7 +176,12 @@ app.put("/utenti/:username", function(request, response) {
     );
     db.get(sql3, function(err) {
       if (err) {
-        response.status(500).send(sql_error).end();
+        response
+          .status(500)
+          .send(
+            sql_error + "\n Probabilmente l'username specificato non esiste"
+          )
+          .end();
         return console.log(err.message);
       }
       var sql4 =
@@ -183,7 +200,10 @@ app.put("/utenti/:username", function(request, response) {
         ";";
       db.run(sql4, function(err) {
         if (err) {
-          response.status(500).send(sql_error).end();
+          response
+            .status(500)
+            .send(sql_error)
+            .end();
           return console.log(sql4 + "\n" + err.message);
         }
         response.status(202).end();
@@ -191,11 +211,14 @@ app.put("/utenti/:username", function(request, response) {
       });
     });
   } else {
-    let err = "Username specificato non valido, controllare la sintassi della richiesta GET";
-    response.status(400).send(err).end();
+    let err =
+      "Username specificato non valido, controllare la sintassi della richiesta PUT";
+    response
+      .status(400)
+      .send(err)
+      .end();
   }
 });
-
 
 app.delete("/utenti/:username", function(request, response) {
   const username = '"' + request.params.username + '"';
@@ -212,7 +235,10 @@ app.delete("/utenti/:username", function(request, response) {
             "inesistente"
         );
         let error = "L' account specificato nella richiesta è inesistente";
-        response.status(404).send(error).end();
+        response
+          .status(404)
+          .send(error)
+          .end();
         return console.log(err.message);
       }
       console.log(
@@ -227,7 +253,10 @@ app.delete("/utenti/:username", function(request, response) {
       var sql_del = "DELETE FROM utenti WHERE username =" + username;
       db.run(sql_del, function(err) {
         if (err) {
-          response.status(500).send(sql_error).end();
+          response
+            .status(500)
+            .send(sql_error)
+            .end();
           return console.log(sql_del + "\n" + err.message);
         }
         response.status(200).end();
@@ -235,16 +264,27 @@ app.delete("/utenti/:username", function(request, response) {
       });
     });
   } else {
-    let err = "Username specificato non valido, controllare la sintassi della richiesta GET";
-    response.status(400).send(err).end();
+    let err =
+      "Username specificato non valido, controllare la sintassi della richiesta DELETE";
+    response
+      .status(400)
+      .send(err)
+      .end();
   }
 });
 
 // ENDPOINT GESTIONE CORSO
-// get -> show user list
+// get -> show courses list
 app.get("/corsi", function(request, response) {
   db.all("select * from corsi", function(err, rows) {
-    response.send(JSON.stringify(rows));
+    if (err) {
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
+      return console.log(err.message);
+    }
+    response.status(200).send(JSON.stringify(rows));
   });
 });
 
@@ -255,6 +295,13 @@ app.get("/corsi/:codice", function(request, response) {
   var sql = sql + codice;
   console.log(sql);
   db.get(sql, function(err, row) {
+    if (err) {
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
+      return console.log(err.message);
+    }
     response.status(200).send(JSON.stringify(row));
   });
 });
@@ -267,28 +314,47 @@ app.post("/corsi", function(request, response) {
   var cfu = request.body.cfu;
   var programma = request.body.programma;
   var codice_orario = request.body.codice_orario;
-  var sql2 =
-    "INSERT INTO corsi (codice, titolo, descrizione, cfu, programma, codice_orario) VALUES (" +
-    codice +
-    ", " +
-    titolo +
-    ", " +
-    descrizione +
-    ", " +
-    cfu +
-    ", " +
-    programma +
-    ", " +
-    codice_orario +
-    ")";
-  console.log(sql2);
-  db.run(sql2, function(err) {
+  var sql1 = "SELECT COUNT(codice) FROM corsi WHERE codice = " + codice + ";";
+  db.get(sql1, function(err, row) {
     if (err) {
-      response.status(500).end();
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
       return console.log(err.message);
     }
-    response.status(201).end();
-    return console.log("A row has been inserted with codice " + codice);
+    var num = row["COUNT(codice)"];
+    if (num == 0) {
+      var sql2 =
+        "INSERT INTO corsi (codice, titolo, descrizione, cfu, programma, codice_orario) VALUES (" +
+        codice +
+        ", " +
+        titolo +
+        ", " +
+        descrizione +
+        ", " +
+        cfu +
+        ", " +
+        programma +
+        ", " +
+        codice_orario +
+        ")";
+      console.log(sql2);
+      db.run(sql2, function(err) {
+        if (err) {
+          response.status(500).end();
+          return console.log(err.message);
+        }
+        response.status(201).end();
+        return console.log("A course has been inserted with codice " + codice);
+      });
+    } else {
+      err = "Esiste un altro corso con lo stesso codice";
+      response
+        .status(409)
+        .send(err)
+        .end();
+    }
   });
 });
 
@@ -321,7 +387,10 @@ app.put("/corsi/:codice", function(request, response) {
     );
     db.get(sql3, function(err) {
       if (err) {
-        response.status(304).end();
+        response
+          .status(500)
+          .send(sql_error + "\n Probabilmente il codice specificato non esiste")
+          .end();
         return console.log(err.message);
       }
       var sql4 =
@@ -342,15 +411,23 @@ app.put("/corsi/:codice", function(request, response) {
         ";";
       db.run(sql4, function(err) {
         if (err) {
-          response.status(304).end();
-          return console.log(sql4 + "\n" + err.message);
+          response
+            .status(500)
+            .send(sql_error)
+            .end();
+          return console.log(err.message);
         }
-        response.status(202).end();
+        response.status(200).end();
         return console.log("Operazione eseguita con successo");
       });
     });
   } else {
-    response.status(304).end();
+    let err =
+      "Codice specificato non valido o inesistente, controllare la sintassi della richiesta PUT";
+    response
+      .status(400)
+      .send(err)
+      .end();
   }
 });
 
@@ -366,7 +443,12 @@ app.delete("/corsi/:codice", function(request, response) {
             codice +
             "inesistente"
         );
-        response.status(404).end();
+        let err =
+          "Codice specificato inesistente, controllare la sintassi della richiesta DELETE";
+        response
+          .status(404)
+          .send(err)
+          .end();
         return console.log(err.message);
       }
       console.log(
@@ -379,15 +461,23 @@ app.delete("/corsi/:codice", function(request, response) {
       var sql_del = "DELETE FROM corsi WHERE codice =" + codice;
       db.run(sql_del, function(err) {
         if (err) {
-          response.status(304).end();
+          response
+            .status(500)
+            .send(sql_error)
+            .end();
           return console.log(sql_del + "\n" + err.message);
         }
-        response.status(202).end();
+        response.status(200).end();
         return console.log("Operazione di rimozione eseguita con successo");
       });
     });
   } else {
-    response.status(304).end();
+    let err =
+      "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE";
+    response
+      .status(400)
+      .send(err)
+      .end();
   }
 });
 
@@ -395,7 +485,14 @@ app.delete("/corsi/:codice", function(request, response) {
 // get -> show time list
 app.get("/orari", function(request, response) {
   db.all("select * from orari", function(err, rows) {
-    response.send(JSON.stringify(rows));
+    if (err) {
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
+      return console.log(err.message);
+    }
+    response.status(200).send(JSON.stringify(rows));
   });
 });
 
@@ -406,6 +503,13 @@ app.get("/orari/:codice", function(request, response) {
   var sql = sql + codice;
   console.log(sql);
   db.get(sql, function(err, row) {
+    if (err) {
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
+      return console.log(err.message);
+    }
     response.status(200).send(JSON.stringify(row));
   });
 });
@@ -418,28 +522,47 @@ app.post("/orari", function(request, response) {
   var mercoledi = request.body.mercoledi;
   var giovedi = request.body.giovedi;
   var venerdi = request.body.venerdi;
-  var sql2 =
-    "INSERT INTO corsi (codice, lunedi, martedi, mercoledi, giovedi, venerdi) VALUES (" +
-    codice +
-    ", " +
-    lunedi +
-    ", " +
-    martedi +
-    ", " +
-    mercoledi +
-    ", " +
-    giovedi +
-    ", " +
-    venerdi +
-    ")";
-  console.log(sql2);
-  db.run(sql2, function(err) {
+  var sql1 = "SELECT COUNT(codice) FROM orari WHERE codice = " + codice + ";";
+  db.get(sql1, function(err, row) {
     if (err) {
-      response.status(500).end();
+      response
+        .status(500)
+        .send(sql_error)
+        .end();
       return console.log(err.message);
     }
-    response.status(201).end();
-    return console.log("Inserito orario con codice " + codice);
+    var num = row["COUNT(codice)"];
+    if (num == 0) {
+      var sql2 =
+        "INSERT INTO orari (codice, lunedi, martedi, mercoledi, giovedi, venerdi) VALUES (" +
+        codice +
+        ", " +
+        lunedi +
+        ", " +
+        martedi +
+        ", " +
+        mercoledi +
+        ", " +
+        giovedi +
+        ", " +
+        venerdi +
+        ")";
+      console.log(sql2);
+      db.run(sql2, function(err) {
+        if (err) {
+          response.status(500).send(sql_error + "\n Probabilmente il codice specificato già esiste").end();
+          return console.log(err.message);
+        }
+        response.status(201).end();
+        return console.log("Inserito orario con codice " + codice);
+      });
+    } else {
+      err = "Esiste un altro orario con lo stesso codice";
+      response
+        .status(409)
+        .send(err)
+        .end();
+    }
   });
 });
 
@@ -459,7 +582,7 @@ app.put("/orari/:codice", function(request, response) {
     );
     db.get(sql3, function(err) {
       if (err) {
-        response.status(304).end();
+        response.status(500).send(sql_error + "\n Probabilmente non esiste nessun orario con il codice: " + codice).end();
         return console.log(err.message);
       }
       var sql4 =
@@ -480,7 +603,7 @@ app.put("/orari/:codice", function(request, response) {
         ";";
       db.run(sql4, function(err) {
         if (err) {
-          response.status(304).end();
+          response.status(500).send(sql_error).end();
           return console.log(sql4 + "\n" + err.message);
         }
         response.status(202).end();
@@ -488,7 +611,12 @@ app.put("/orari/:codice", function(request, response) {
       });
     });
   } else {
-    response.status(304).end();
+      let err =
+      "Codice specificato non valido o inesistente, controllare la sintassi della richiesta GET";
+      response
+        .status(400)
+        .send(err)
+        .end();  
   }
 });
 
@@ -503,7 +631,7 @@ app.delete("/orari/:codice", function(request, response) {
             codice +
             "inesistente"
         );
-        response.status(404).end();
+        response.status(404).send("Codice specificato invalido o inesistente").end();
         return console.log(err.message);
       }
       console.log(
@@ -512,7 +640,7 @@ app.delete("/orari/:codice", function(request, response) {
       var sql_del = "DELETE FROM orari WHERE codice =" + codice;
       db.run(sql_del, function(err) {
         if (err) {
-          response.status(304).end();
+          response.status(500).send(sql_error).end();
           return console.log(sql_del + "\n" + err.message);
         }
         response.status(202).end();
@@ -520,7 +648,12 @@ app.delete("/orari/:codice", function(request, response) {
       });
     });
   } else {
-    response.status(304).end();
+    let err =
+      "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE";
+    response
+      .status(400)
+      .send(err)
+      .end();  
   }
 });
 
@@ -538,7 +671,7 @@ app.get("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).end();
+        res.status(404).send(sql_error + "\nUsername: " + username + " non esistente").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -557,27 +690,26 @@ app.get("/frequentare/:username", function(req, res) {
             "SELECT * FROM frequentare WHERE username = " + "'" + login + "'";
           db.all(sql2, function(err, rows) {
             if (err) {
-              res.status(404).end();
+              res.status(404).send("Nessun riga presente per l'username: " + username).end();
               return console.log(err.message);
             }
             console.log(rows + " || " + sql2);
-            res
+             return res
               .status(200)
               .send(JSON.stringify(rows))
               .end();
-            return;
           });
         }
       } else {
         res
           .status(401)
           .set("WWW-Authenticate", "Basic")
-          .send("You need to authenticate in order to access this info")
+          .send("You need to authenticate in order to access this informations")
           .end();
       }
     });
   } else {
-    res.status(400).end();
+    res.status(400).send("Username specificato non valido, riprovare").end();
   }
 });
 
@@ -673,10 +805,10 @@ app.post("/frequentare/:username", function(req, res) {
   }
 });
 
-// post -> update an association between user and course
+// put -> update an association between user and course
 // 1-Autentica l'utente
-// 2-Controlla se esiste il l'associazione
-// 3-Effettua la modificaa dell'associazione
+// 2-Controlla se esiste l'associazione
+// 3-Effettua la modifica dell'associazione
 
 // using x-www-form-urlencoded !!
 app.put("/frequentare/:username", function(req, res) {
@@ -694,7 +826,7 @@ app.put("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).end();
+        res.status(404).send("Username: " + username + " inesistente").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -716,7 +848,7 @@ app.put("/frequentare/:username", function(req, res) {
                 console.log("Id associazione: " + id + "inesistente");
                 res
                   .status(500)
-                  .send("Id associazione inesistente")
+                  .send(sql_error + "Id associazione inesistente")
                   .end();
                 return console.log(err.message);
               }
@@ -741,15 +873,14 @@ app.put("/frequentare/:username", function(req, res) {
                     username +
                     "', codice_corso=" +
                     codice_corso +
-                    ", aula='" +
+                    ", aula=" +
                     aula +
-                    "'" +
                     " WHERE id =" +
                     id;
                   console.log(sql2);
                   db.run(sql2, function(err) {
                     if (err) {
-                      res.status(304).end();
+                      res.status(500).send(sql_error).end();
                       return console.log(err.message);
                     }
                     res
@@ -764,7 +895,7 @@ app.put("/frequentare/:username", function(req, res) {
               } else {
                 res
                   .status(404)
-                  .send("Il nuovo codice è invalido")
+                  .send("Il nuovo codice :" + codice_corso + "è invalido")
                   .end();
                 return console.log(err.message);
               }
@@ -784,7 +915,7 @@ app.put("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).end();
+    res.status(400).send("Username specificato non valido").end();
   }
 });
 
@@ -795,7 +926,7 @@ app.delete("/frequentare/:username", function(req, res) {
   const id = req.body["id"];
   var passwd = "";
   // recupero la relativa password
-  if (username !== null) {
+  if (username != null) {
     var sql =
       "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
     db.get(sql, function(err, row) {
@@ -852,9 +983,10 @@ app.delete("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).end();
+    res.status(400).send("Username specificato non valido").end();
   }
 });
+
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
