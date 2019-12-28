@@ -71,6 +71,7 @@ app.get("/utenti", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
     }
@@ -89,6 +90,7 @@ app.get("/utenti/:username", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -111,6 +113,7 @@ app.post("/utenti", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -133,6 +136,7 @@ app.post("/utenti", function(request, response) {
         if (err) {
           response
             .status(500)
+            .type('html')
             .send(sql_error)
             .end();
           return console.log(err.message);
@@ -144,6 +148,7 @@ app.post("/utenti", function(request, response) {
       err = "Esiste un altro utente con lo stesso username";
       response
         .status(409)
+        .type('html')
         .send(err)
         .end();
     }
@@ -178,6 +183,7 @@ app.put("/utenti/:username", function(request, response) {
       if (err) {
         response
           .status(500)
+          .type('html')
           .send(
             sql_error + "\n Probabilmente l'username specificato non esiste"
           )
@@ -202,6 +208,7 @@ app.put("/utenti/:username", function(request, response) {
         if (err) {
           response
             .status(500)
+            .type('html')
             .send(sql_error)
             .end();
           return console.log(sql4 + "\n" + err.message);
@@ -215,6 +222,7 @@ app.put("/utenti/:username", function(request, response) {
       "Username specificato non valido, controllare la sintassi della richiesta PUT";
     response
       .status(400)
+      .type('html')
       .send(err)
       .end();
   }
@@ -234,9 +242,10 @@ app.delete("/utenti/:username", function(request, response) {
             username +
             "inesistente"
         );
-        let error = "L' account specificato nella richiesta è inesistente";
+        let error = "L'account specificato nella richiesta è inesistente";
         response
           .status(404)
+          .type('html')
           .send(error)
           .end();
         return console.log(err.message);
@@ -255,6 +264,7 @@ app.delete("/utenti/:username", function(request, response) {
         if (err) {
           response
             .status(500)
+            .type('html')
             .send(sql_error)
             .end();
           return console.log(sql_del + "\n" + err.message);
@@ -268,6 +278,7 @@ app.delete("/utenti/:username", function(request, response) {
       "Username specificato non valido, controllare la sintassi della richiesta DELETE";
     response
       .status(400)
+      .type('html')
       .send(err)
       .end();
   }
@@ -280,6 +291,7 @@ app.get("/corsi", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -298,6 +310,7 @@ app.get("/corsi/:codice", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -319,6 +332,7 @@ app.post("/corsi", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -342,7 +356,7 @@ app.post("/corsi", function(request, response) {
       console.log(sql2);
       db.run(sql2, function(err) {
         if (err) {
-          response.status(500).end();
+          response.status(500).type('html').send(sql_error).end();
           return console.log(err.message);
         }
         response.status(201).end();
@@ -352,6 +366,7 @@ app.post("/corsi", function(request, response) {
       err = "Esiste un altro corso con lo stesso codice";
       response
         .status(409)
+        .type('html')
         .send(err)
         .end();
     }
@@ -389,6 +404,7 @@ app.put("/corsi/:codice", function(request, response) {
       if (err) {
         response
           .status(500)
+          .type('html')
           .send(sql_error + "\n Probabilmente il codice specificato non esiste")
           .end();
         return console.log(err.message);
@@ -413,6 +429,7 @@ app.put("/corsi/:codice", function(request, response) {
         if (err) {
           response
             .status(500)
+            .type('html')
             .send(sql_error)
             .end();
           return console.log(err.message);
@@ -426,6 +443,7 @@ app.put("/corsi/:codice", function(request, response) {
       "Codice specificato non valido o inesistente, controllare la sintassi della richiesta PUT";
     response
       .status(400)
+      .type('html')
       .send(err)
       .end();
   }
@@ -447,6 +465,7 @@ app.delete("/corsi/:codice", function(request, response) {
           "Codice specificato inesistente, controllare la sintassi della richiesta DELETE";
         response
           .status(404)
+          .type('html')
           .send(err)
           .end();
         return console.log(err.message);
@@ -463,6 +482,7 @@ app.delete("/corsi/:codice", function(request, response) {
         if (err) {
           response
             .status(500)
+            .type('html')
             .send(sql_error)
             .end();
           return console.log(sql_del + "\n" + err.message);
@@ -476,6 +496,7 @@ app.delete("/corsi/:codice", function(request, response) {
       "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE";
     response
       .status(400)
+      .type('html')
       .send(err)
       .end();
   }
@@ -488,6 +509,7 @@ app.get("/orari", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -506,6 +528,7 @@ app.get("/orari/:codice", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -527,6 +550,7 @@ app.post("/orari", function(request, response) {
     if (err) {
       response
         .status(500)
+        .type('html')
         .send(sql_error)
         .end();
       return console.log(err.message);
@@ -550,7 +574,7 @@ app.post("/orari", function(request, response) {
       console.log(sql2);
       db.run(sql2, function(err) {
         if (err) {
-          response.status(500).send(sql_error + "\n Probabilmente il codice specificato già esiste").end();
+          response.status(500).type('html').send(sql_error + "\n Probabilmente il codice specificato già esiste").end();
           return console.log(err.message);
         }
         response.status(201).end();
@@ -560,6 +584,7 @@ app.post("/orari", function(request, response) {
       err = "Esiste un altro orario con lo stesso codice";
       response
         .status(409)
+        .type('html')
         .send(err)
         .end();
     }
@@ -582,7 +607,7 @@ app.put("/orari/:codice", function(request, response) {
     );
     db.get(sql3, function(err) {
       if (err) {
-        response.status(500).send(sql_error + "\n Probabilmente non esiste nessun orario con il codice: " + codice).end();
+        response.status(500).type('html').send(sql_error + "\n Probabilmente non esiste nessun orario con il codice: " + codice).end();
         return console.log(err.message);
       }
       var sql4 =
@@ -603,7 +628,7 @@ app.put("/orari/:codice", function(request, response) {
         ";";
       db.run(sql4, function(err) {
         if (err) {
-          response.status(500).send(sql_error).end();
+          response.status(500).type('html').send(sql_error).end();
           return console.log(sql4 + "\n" + err.message);
         }
         response.status(202).end();
@@ -615,6 +640,7 @@ app.put("/orari/:codice", function(request, response) {
       "Codice specificato non valido o inesistente, controllare la sintassi della richiesta GET";
       response
         .status(400)
+        .type('html')
         .send(err)
         .end();  
   }
@@ -631,7 +657,7 @@ app.delete("/orari/:codice", function(request, response) {
             codice +
             "inesistente"
         );
-        response.status(404).send("Codice specificato invalido o inesistente").end();
+        response.status(404).type('html').send("Codice specificato invalido o inesistente").end();
         return console.log(err.message);
       }
       console.log(
@@ -640,7 +666,7 @@ app.delete("/orari/:codice", function(request, response) {
       var sql_del = "DELETE FROM orari WHERE codice =" + codice;
       db.run(sql_del, function(err) {
         if (err) {
-          response.status(500).send(sql_error).end();
+          response.status(500).type('html').send(sql_error).end();
           return console.log(sql_del + "\n" + err.message);
         }
         response.status(202).end();
@@ -652,6 +678,7 @@ app.delete("/orari/:codice", function(request, response) {
       "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE";
     response
       .status(400)
+      .type('html')
       .send(err)
       .end();  
   }
@@ -671,7 +698,7 @@ app.get("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).send(sql_error + "\nUsername: " + username + " non esistente").end();
+        res.status(404).type('html').send(sql_error + "\nUsername: " + username + " non esistente").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -690,7 +717,7 @@ app.get("/frequentare/:username", function(req, res) {
             "SELECT * FROM frequentare WHERE username = " + "'" + login + "'";
           db.all(sql2, function(err, rows) {
             if (err) {
-              res.status(404).send("Nessun riga presente per l'username: " + username).end();
+              res.status(404).type('html').send("Nessun riga presente per l'username: " + username).end();
               return console.log(err.message);
             }
             console.log(rows + " || " + sql2);
@@ -709,7 +736,7 @@ app.get("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).send("Username specificato non valido, riprovare").end();
+    res.status(400).type('html').send("Username specificato non valido, riprovare").end();
   }
 });
 
@@ -733,7 +760,7 @@ app.post("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).end();
+        res.status(404).type('html').send(sql_error + "\nProbabilme l'username: " + username + "non esiste").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -756,6 +783,7 @@ app.post("/frequentare/:username", function(req, res) {
                 console.log("Codice_corso: " + codice_corso + "inesistente");
                 res
                   .status(500)
+                  .type('html')
                   .send("Codice corso inesistente")
                   .end();
                 return console.log(err.message);
@@ -775,12 +803,14 @@ app.post("/frequentare/:username", function(req, res) {
                   if (err) {
                     res
                       .status(500)
+                      .type('html')
                       .send("Errore nell'inserimento dell'associazione")
                       .end();
                     return console.log(err.message);
                   }
                   res
                     .status(201)
+                    .type('html')
                     .send("Associazione inserita con successo")
                     .end();
                 });
@@ -789,6 +819,7 @@ app.post("/frequentare/:username", function(req, res) {
           } else
             res
               .status(404)
+              .type('html')
               .send("Codice corso inesistente")
               .end();
         }
@@ -801,7 +832,7 @@ app.post("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).end();
+    res.status(400).type('html').send("Username: " + username + " non valido").end();
   }
 });
 
@@ -826,7 +857,7 @@ app.put("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).send("Username: " + username + " inesistente").end();
+        res.status(404).type('html').send("Username: " + username + " inesistente").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -848,6 +879,7 @@ app.put("/frequentare/:username", function(req, res) {
                 console.log("Id associazione: " + id + "inesistente");
                 res
                   .status(500)
+                  .type('html')
                   .send(sql_error + "Id associazione inesistente")
                   .end();
                 return console.log(err.message);
@@ -863,6 +895,7 @@ app.put("/frequentare/:username", function(req, res) {
                     );
                     res
                       .status(500)
+                      .type('html')
                       .send("Codice corso inesistente")
                       .end();
                     return console.log(err.message);
@@ -880,11 +913,12 @@ app.put("/frequentare/:username", function(req, res) {
                   console.log(sql2);
                   db.run(sql2, function(err) {
                     if (err) {
-                      res.status(500).send(sql_error).end();
+                      res.status(500).type('html').send(sql_error).end();
                       return console.log(err.message);
                     }
                     res
                       .status(202)
+                      .type('html')
                       .send("Operazione di aggiornamento eseguita con successo")
                       .end();
                     return console.log(
@@ -895,6 +929,7 @@ app.put("/frequentare/:username", function(req, res) {
               } else {
                 res
                   .status(404)
+                  .type('html')
                   .send("Il nuovo codice :" + codice_corso + "è invalido")
                   .end();
                 return console.log(err.message);
@@ -903,6 +938,7 @@ app.put("/frequentare/:username", function(req, res) {
           } else
             res
               .status(404)
+              .type('html')
               .send("Id associazione inesistente")
               .end();
         }
@@ -915,7 +951,7 @@ app.put("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).send("Username specificato non valido").end();
+    res.status(400).type('html').send("Username specificato non valido").end();
   }
 });
 
@@ -934,7 +970,7 @@ app.delete("/frequentare/:username", function(req, res) {
         console.log(
           "Ottenuta richiesta con username: " + username + "inesistente"
         );
-        res.status(404).end();
+        res.status(404).type('html').send(sql_error + "\nProbabilmente l'username: " + username + " è inesistente").end();
         return console.log(err.message);
       }
       passwd = row.password;
@@ -955,6 +991,7 @@ app.delete("/frequentare/:username", function(req, res) {
               console.log("Id associazione: " + id + "inesistente");
               res
                 .status(500)
+                .type('html')
                 .send("Id associazione inesistente")
                 .end();
               return console.log(err.message);
@@ -963,11 +1000,12 @@ app.delete("/frequentare/:username", function(req, res) {
             let sql2 = "DELETE FROM frequentare WHERE id =" + id;
             db.run(sql2, function(err) {
               if (err) {
-                res.status(304).end();
+                res.status(500).type('html').send(sql_error).end();
                 return console.log(err.message);
               }
               res
                 .status(202)
+                .type('html')
                 .send("Operazione di elimina eseguita con successo")
                 .end();
               return console.log("Operazione di elimina eseguita con successo");
@@ -983,7 +1021,7 @@ app.delete("/frequentare/:username", function(req, res) {
       }
     });
   } else {
-    res.status(400).send("Username specificato non valido").end();
+    res.status(400).type('html').send("Username specificato non valido").end();
   }
 });
 
