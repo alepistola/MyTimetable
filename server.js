@@ -75,7 +75,7 @@ app.get("/utenti", function(request, response) {
         .send(sql_error)
         .end();
     }
-    response.status(200);
+    response.status(200).type('application/json');
     response.send(JSON.stringify(rows));
   });
 });
@@ -95,7 +95,7 @@ app.get("/utenti/:username", function(request, response) {
         .end();
       return console.log(err.message);
     }
-    response.status(200).send(JSON.stringify(row));
+    response.status(200).type('application/json').send(JSON.stringify(row));
   });
 });
 
@@ -141,7 +141,7 @@ app.post("/utenti", function(request, response) {
             .end();
           return console.log(err.message);
         }
-        response.status(201).end();
+        response.type('html').status(201).send("Aggiunto utente " + username).end();
         return console.log("Aggiunto utente " + username);
       });
     } else {
@@ -213,7 +213,7 @@ app.put("/utenti/:username", function(request, response) {
             .end();
           return console.log(sql4 + "\n" + err.message);
         }
-        response.status(202).end();
+        response.status(202).type('html').send("Operazione di aggiornamento utente: " + username + " eseguita con successo").end();
         return console.log("Operazione di aggiornamento eseguita con successo");
       });
     });
@@ -269,7 +269,7 @@ app.delete("/utenti/:username", function(request, response) {
             .end();
           return console.log(sql_del + "\n" + err.message);
         }
-        response.status(200).end();
+        response.status(200).type('html').send("Operazione di rimozione utente: " + username + " eseguita con successo").end();
         return console.log("Operazione di rimozione eseguita con successo");
       });
     });
@@ -296,7 +296,7 @@ app.get("/corsi", function(request, response) {
         .end();
       return console.log(err.message);
     }
-    response.status(200).send(JSON.stringify(rows));
+    response.status(200).type('application/json').send(JSON.stringify(rows));
   });
 });
 
@@ -315,7 +315,7 @@ app.get("/corsi/:codice", function(request, response) {
         .end();
       return console.log(err.message);
     }
-    response.status(200).send(JSON.stringify(row));
+    response.status(200).type('application/json').send(JSON.stringify(row));
   });
 });
 
@@ -359,7 +359,7 @@ app.post("/corsi", function(request, response) {
           response.status(500).type('html').send(sql_error).end();
           return console.log(err.message);
         }
-        response.status(201).end();
+        response.status(201).type('html').send("Aggiunto corso con codice: " + codice).end();
         return console.log("A course has been inserted with codice " + codice);
       });
     } else {
@@ -434,7 +434,7 @@ app.put("/corsi/:codice", function(request, response) {
             .end();
           return console.log(err.message);
         }
-        response.status(200).end();
+        response.status(200).type('html').send("Operazione di modifica del corso: " + codice + " eseguita con successo").end();
         return console.log("Operazione eseguita con successo");
       });
     });
@@ -487,7 +487,7 @@ app.delete("/corsi/:codice", function(request, response) {
             .end();
           return console.log(sql_del + "\n" + err.message);
         }
-        response.status(200).end();
+        response.status(200).type('html').send("Operazione di rimozione del corso: " + codice + " eseguita con successo").end();
         return console.log("Operazione di rimozione eseguita con successo");
       });
     });
@@ -514,7 +514,7 @@ app.get("/orari", function(request, response) {
         .end();
       return console.log(err.message);
     }
-    response.status(200).send(JSON.stringify(rows));
+    response.status(200).type('application/json').send(JSON.stringify(rows));
   });
 });
 
@@ -533,7 +533,7 @@ app.get("/orari/:codice", function(request, response) {
         .end();
       return console.log(err.message);
     }
-    response.status(200).send(JSON.stringify(row));
+    response.status(200).type('application/json').send(JSON.stringify(row));
   });
 });
 
@@ -577,7 +577,7 @@ app.post("/orari", function(request, response) {
           response.status(500).type('html').send(sql_error + "\n Probabilmente il codice specificato già esiste").end();
           return console.log(err.message);
         }
-        response.status(201).end();
+        response.status(201).type('html').send("Inserito orario con codice: " + codice).end();
         return console.log("Inserito orario con codice " + codice);
       });
     } else {
@@ -631,7 +631,7 @@ app.put("/orari/:codice", function(request, response) {
           response.status(500).type('html').send(sql_error).end();
           return console.log(sql4 + "\n" + err.message);
         }
-        response.status(202).end();
+        response.status(202).type('html').send("Operazione di aggiornamento dell'orario : " + codice + " eseguita con successo").end();
         return console.log("Operazione di aggiornamento eseguita con successo");
       });
     });
@@ -669,7 +669,7 @@ app.delete("/orari/:codice", function(request, response) {
           response.status(500).type('html').send(sql_error).end();
           return console.log(sql_del + "\n" + err.message);
         }
-        response.status(202).end();
+        response.status(202).type('html').send("Operazione di rimozione dell'orario: " + codice + " eseguita con successo").end();
         return console.log("Operazione di rimozione eseguita con successo");
       });
     });
@@ -723,6 +723,7 @@ app.get("/frequentare/:username", function(req, res) {
             console.log(rows + " || " + sql2);
              return res
               .status(200)
+              .type('application/json')
               .send(JSON.stringify(rows))
               .end();
           });
@@ -811,7 +812,7 @@ app.post("/frequentare/:username", function(req, res) {
                   res
                     .status(201)
                     .type('html')
-                    .send("Associazione inserita con successo")
+                    .send("Associazione dell'utente " + username + "inserita con successo")
                     .end();
                 });
               }
@@ -919,7 +920,7 @@ app.put("/frequentare/:username", function(req, res) {
                     res
                       .status(202)
                       .type('html')
-                      .send("Operazione di aggiornamento eseguita con successo")
+                      .send("Operazione di aggiornamento associazione: " + id + " eseguita con successo")
                       .end();
                     return console.log(
                       "Operazione di aggiornamento eseguita con successo"
