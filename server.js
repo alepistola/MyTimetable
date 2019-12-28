@@ -4,8 +4,10 @@
 // init project
 var express = require("express");
 var bodyParser = require("body-parser");
+//var xmlparser = require('express-xml-bodyparser');
 var app = express();
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());//app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(xmlparser());
 
 // we've started you off with Express,
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -101,11 +103,11 @@ app.get("/api/utenti/:username", function(request, response) {
 
 // post -> insert
 app.post("/api/utenti", function(request, response) {
-  var username = request.body.username;
-  var nome = request.body.nome;
-  var cognome = request.body.cognome;
-  var password = request.body.password;
-  var corso_di_studio = request.body.corso_di_studio;
+  var username = "'" + request.body.username + "'";
+  var nome = "'" + request.body.nome + "'";
+  var cognome = "'" + request.body.cognome + "'";
+  var password = "'" + request.body.password + "'";
+  var corso_di_studio = "'" + request.body.corso_di_studio + "'";
   var sql1 =
     "SELECT COUNT(username) FROM utenti WHERE username = " + username + ";";
   console.log(sql1);
@@ -158,11 +160,11 @@ app.post("/api/utenti", function(request, response) {
 // put -> update specific user
 app.put("/api/utenti/:username", function(request, response) {
   const username = '"' + request.params.username + '"';
-  var new_user = request.body.username;
-  var nome = request.body.nome;
-  var cognome = request.body.cognome;
-  var password = request.body.password;
-  var corso_di_studio = request.body.corso_di_studio;
+  var new_user = '"' + request.body.username + '"';
+  var nome = '"' + request.body.nome + '"';
+  var cognome = '"' + request.body.cognome + '"';
+  var password = '"' + request.body.password + '"';
+  var corso_di_studio = '"' + request.body.corso_di_studio + '"';
   var sql3 = "SELECT username FROM utenti WHERE username = " + username + ";";
   if (username !== undefined) {
     console.log(
@@ -321,11 +323,11 @@ app.get("/api/corsi/:codice", function(request, response) {
 
 // post -> insert
 app.post("/api/corsi", function(request, response) {
-  var codice = request.body.codice;
-  var titolo = request.body.titolo;
-  var descrizione = request.body.descrizione;
+  var codice = "'" + request.body.codice + "'";
+  var titolo = "'" + request.body.titolo + "'";
+  var descrizione = "'" + request.body.descrizione + "'";
   var cfu = request.body.cfu;
-  var programma = request.body.programma;
+  var programma = "'" + request.body.programma + "'";
   var codice_orario = request.body.codice_orario;
   var sql1 = "SELECT COUNT(codice) FROM corsi WHERE codice = " + codice + ";";
   db.get(sql1, function(err, row) {
@@ -375,12 +377,12 @@ app.post("/api/corsi", function(request, response) {
 
 // put -> update specific course
 app.put("/api/corsi/:codice", function(request, response) {
-  const codice = '"' + request.params.codice + '"';
-  var new_codice = request.body.new_codice;
-  var titolo = request.body.titolo;
-  var descrizione = request.body.descrizione;
+  const codice = request.params.codice;
+  var new_codice = request.body.codice;
+  var titolo = "'" + request.body.titolo + "'";
+  var descrizione = "'" + request.body.descrizione + "'";
   var cfu = request.body.cfu;
-  var programma = request.body.programma;
+  var programma = "'" + request.body.programma + "'";
   var codice_orario = request.body.codice_orario;
   var sql3 = "SELECT codice FROM corsi WHERE codice = " + codice + ";";
   if (codice !== undefined) {
@@ -540,11 +542,11 @@ app.get("/api/orari/:codice", function(request, response) {
 // post -> insert
 app.post("/api/orari", function(request, response) {
   var codice = request.body.codice;
-  var lunedi = request.body.lunedi;
-  var martedi = request.body.martedi;
-  var mercoledi = request.body.mercoledi;
-  var giovedi = request.body.giovedi;
-  var venerdi = request.body.venerdi;
+  var lunedi = "'" + request.body.lunedi + "'";
+  var martedi = "'" + request.body.martedi + "'";
+  var mercoledi = "'" + request.body.mercoledi + "'";
+  var giovedi = "'" + request.body.giovedi + "'";
+  var venerdi = "'" + request.body.venerdi + "'";
   var sql1 = "SELECT COUNT(codice) FROM orari WHERE codice = " + codice + ";";
   db.get(sql1, function(err, row) {
     if (err) {
@@ -593,13 +595,13 @@ app.post("/api/orari", function(request, response) {
 
 // put -> update specific time
 app.put("/api/orari/:codice", function(request, response) {
-  const codice = '"' + request.params.codice + '"';
-  var new_codice = request.body.new_codice;
-  var lunedi = request.body.lunedi;
-  var martedi = request.body.martedi;
-  var mercoledi = request.body.mercoledi;
-  var giovedi = request.body.giovedi;
-  var venerdi = request.body.venerdi;
+  const codice = request.params.codice;
+  var new_codice = "'" + request.body.codice + "'";
+  var lunedi = "'" + request.body.lunedi + "'";
+  var martedi = "'" + request.body.martedi + "'";
+  var mercoledi = "'" + request.body.mercoledi + "'";
+  var giovedi = "'" + request.body.giovedi + "'";
+  var venerdi = "'" + request.body.venerdi + "'";
   var sql3 = "SELECT codice FROM orari WHERE codice = " + codice + ";";
   if (codice !== undefined) {
     console.log(
@@ -690,7 +692,7 @@ app.get("/api/frequentare/:username", function(req, res) {
   const username = req.params.username;
   var passwd = "";
   // recupero la relativa password
-  if (username !== null) {
+  if (username !== undefined) {
     var sql =
       "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
     db.get(sql, function(err, row) {
@@ -751,9 +753,9 @@ app.post("/api/frequentare/:username", function(req, res) {
   var passwd = "";
   const username = req.params.username;
   var codice_corso = req.body["codice_corso"];
-  var aula = req.body["aula"];
+  var aula = "'" + req.body["aula"] + "'";
   // recupero la relativa password
-  if (username != null) {
+  if (username != undefined) {
     var sql =
       "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
     db.get(sql, function(err, row) {
@@ -776,7 +778,7 @@ app.post("/api/frequentare/:username", function(req, res) {
         const [login, password] = decoded.split(":");
         if (login == username && password == passwd) {
           // controllo se esiste il codice del corso
-          if (codice_corso != null) {
+          if (codice_corso != undefined) {
             let sql1 =
               "SELECT codice FROM corsi WHERE codice = " + codice_corso;
             db.get(sql1, function(err, row) {
@@ -790,15 +792,15 @@ app.post("/api/frequentare/:username", function(req, res) {
                 return console.log(err.message);
               }
               // effettuo l'associazione
-              if (aula != null) {
+              if (aula != undefined) {
                 let sql2 =
                   "INSERT INTO frequentare (username, codice_corso, aula) VALUES ('" +
                   username +
                   "', " +
                   codice_corso +
-                  ", '" +
+                  ", " +
                   aula +
-                  "')";
+                  ")";
                 console.log(sql2);
                 db.run(sql2, function(err) {
                   if (err) {
@@ -812,7 +814,7 @@ app.post("/api/frequentare/:username", function(req, res) {
                   res
                     .status(201)
                     .type('html')
-                    .send("Associazione dell'utente " + username + "inserita con successo")
+                    .send("Associazione dell'utente " + username + " inserita con successo")
                     .end();
                 });
               }
@@ -847,10 +849,10 @@ app.put("/api/frequentare/:username", function(req, res) {
   var passwd = "";
   const username = req.params.username;
   var codice_corso = req.body["codice_corso"];
-  var aula = req.body["aula"] != undefined ? req.body["aula"] : "";
+  var aula = req.body["aula"] != undefined ? "'" + req.body["aula"] + "'": "";
   var id = req.body["id"];
   // recupero la relativa password
-  if (username != null) {
+  if (username != undefined) {
     var sql =
       "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
     db.get(sql, function(err, row) {
@@ -873,7 +875,7 @@ app.put("/api/frequentare/:username", function(req, res) {
         const [login, password] = decoded.split(":");
         if (login == username && password == passwd) {
           // controllo se esiste l'associazione
-          if (id != null) {
+          if (id != undefined) {
             let sql1 = "SELECT id FROM frequentare WHERE id = " + id;
             db.get(sql1, function(err, row) {
               if (err) {
@@ -886,7 +888,7 @@ app.put("/api/frequentare/:username", function(req, res) {
                 return console.log(err.message);
               }
               // controllo se esiste il nuovo corso
-              if (codice_corso != null) {
+              if (codice_corso != undefined) {
                 let sql1 =
                   "SELECT codice FROM corsi WHERE codice = " + codice_corso;
                 db.get(sql1, function(err, row) {
@@ -963,7 +965,7 @@ app.delete("/api/frequentare/:username", function(req, res) {
   const id = req.body["id"];
   var passwd = "";
   // recupero la relativa password
-  if (username != null) {
+  if (username != undefined) {
     var sql =
       "SELECT password FROM utenti WHERE username=" + "'" + username + "'";
     db.get(sql, function(err, row) {
