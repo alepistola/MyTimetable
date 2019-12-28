@@ -58,7 +58,7 @@ db.serialize(function() {
 });
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/", function(request, response) {
+app.get("/api", function(request, response) {
   response.send("MyTimetable basic API");
   //response.sendFile(__dirname + '/views/index.html');
 });
@@ -66,7 +66,7 @@ app.get("/", function(request, response) {
 // endpoints list
 // GESTIONE UTENTI
 // get -> show user list
-app.get("/utenti", function(request, response) {
+app.get("/api/utenti", function(request, response) {
   db.all("select * from utenti", function(err, rows) {
     if (err) {
       response
@@ -81,7 +81,7 @@ app.get("/utenti", function(request, response) {
 });
 
 // get -> show single user
-app.get("/utenti/:username", function(request, response) {
+app.get("/api/utenti/:username", function(request, response) {
   const user = '"' + request.params.username + '"';
   var sql = "select * from utenti where username = ";
   var sql = sql + user;
@@ -100,7 +100,7 @@ app.get("/utenti/:username", function(request, response) {
 });
 
 // post -> insert
-app.post("/utenti", function(request, response) {
+app.post("/api/utenti", function(request, response) {
   var username = request.body.username;
   var nome = request.body.nome;
   var cognome = request.body.cognome;
@@ -156,7 +156,7 @@ app.post("/utenti", function(request, response) {
 });
 
 // put -> update specific user
-app.put("/utenti/:username", function(request, response) {
+app.put("/api/utenti/:username", function(request, response) {
   const username = '"' + request.params.username + '"';
   var new_user = request.body.username;
   var nome = request.body.nome;
@@ -228,7 +228,7 @@ app.put("/utenti/:username", function(request, response) {
   }
 });
 
-app.delete("/utenti/:username", function(request, response) {
+app.delete("/api/utenti/:username", function(request, response) {
   const username = '"' + request.params.username + '"';
   var sql3 =
     "SELECT username, nome, cognome FROM utenti WHERE username = " +
@@ -286,7 +286,7 @@ app.delete("/utenti/:username", function(request, response) {
 
 // ENDPOINT GESTIONE CORSO
 // get -> show courses list
-app.get("/corsi", function(request, response) {
+app.get("/api/corsi", function(request, response) {
   db.all("select * from corsi", function(err, rows) {
     if (err) {
       response
@@ -301,7 +301,7 @@ app.get("/corsi", function(request, response) {
 });
 
 // get -> show single course
-app.get("/corsi/:codice", function(request, response) {
+app.get("/api/corsi/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var sql = "select * from corsi where codice = ";
   var sql = sql + codice;
@@ -320,7 +320,7 @@ app.get("/corsi/:codice", function(request, response) {
 });
 
 // post -> insert
-app.post("/corsi", function(request, response) {
+app.post("/api/corsi", function(request, response) {
   var codice = request.body.codice;
   var titolo = request.body.titolo;
   var descrizione = request.body.descrizione;
@@ -374,7 +374,7 @@ app.post("/corsi", function(request, response) {
 });
 
 // put -> update specific course
-app.put("/corsi/:codice", function(request, response) {
+app.put("/api/corsi/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var new_codice = request.body.new_codice;
   var titolo = request.body.titolo;
@@ -449,7 +449,7 @@ app.put("/corsi/:codice", function(request, response) {
   }
 });
 
-app.delete("/corsi/:codice", function(request, response) {
+app.delete("/api/corsi/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var sql_del =
     "SELECT codice, titolo FROM corsi WHERE codice = " + codice + ";";
@@ -504,7 +504,7 @@ app.delete("/corsi/:codice", function(request, response) {
 
 // ENDPOINT GESTIONE ORARIO
 // get -> show time list
-app.get("/orari", function(request, response) {
+app.get("/api/orari", function(request, response) {
   db.all("select * from orari", function(err, rows) {
     if (err) {
       response
@@ -519,7 +519,7 @@ app.get("/orari", function(request, response) {
 });
 
 // get -> show single time
-app.get("/orari/:codice", function(request, response) {
+app.get("/api/orari/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var sql = "select * from orari where codice = ";
   var sql = sql + codice;
@@ -538,7 +538,7 @@ app.get("/orari/:codice", function(request, response) {
 });
 
 // post -> insert
-app.post("/orari", function(request, response) {
+app.post("/api/orari", function(request, response) {
   var codice = request.body.codice;
   var lunedi = request.body.lunedi;
   var martedi = request.body.martedi;
@@ -592,7 +592,7 @@ app.post("/orari", function(request, response) {
 });
 
 // put -> update specific time
-app.put("/orari/:codice", function(request, response) {
+app.put("/api/orari/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var new_codice = request.body.new_codice;
   var lunedi = request.body.lunedi;
@@ -646,7 +646,7 @@ app.put("/orari/:codice", function(request, response) {
   }
 });
 
-app.delete("/orari/:codice", function(request, response) {
+app.delete("/api/orari/:codice", function(request, response) {
   const codice = '"' + request.params.codice + '"';
   var sql_del = "SELECT codice FROM orari WHERE codice = " + codice + ";";
   if (codice !== undefined) {
@@ -686,7 +686,7 @@ app.delete("/orari/:codice", function(request, response) {
 
 // ENDPOINT frequentare
 // get -> show list of associations belong to specific user
-app.get("/frequentare/:username", function(req, res) {
+app.get("/api/frequentare/:username", function(req, res) {
   const username = req.params.username;
   var passwd = "";
   // recupero la relativa password
@@ -747,7 +747,7 @@ app.get("/frequentare/:username", function(req, res) {
 // 3-Effettua l'associazione
 
 // using x-www-form-urlencoded !!
-app.post("/frequentare/:username", function(req, res) {
+app.post("/api/frequentare/:username", function(req, res) {
   var passwd = "";
   const username = req.params.username;
   var codice_corso = req.body["codice_corso"];
@@ -843,7 +843,7 @@ app.post("/frequentare/:username", function(req, res) {
 // 3-Effettua la modifica dell'associazione
 
 // using x-www-form-urlencoded !!
-app.put("/frequentare/:username", function(req, res) {
+app.put("/api/frequentare/:username", function(req, res) {
   var passwd = "";
   const username = req.params.username;
   var codice_corso = req.body["codice_corso"];
@@ -958,7 +958,7 @@ app.put("/frequentare/:username", function(req, res) {
 
 // ENDPOINT frequentare
 // delete -> delete specific association
-app.delete("/frequentare/:username", function(req, res) {
+app.delete("/api/frequentare/:username", function(req, res) {
   const username = req.params.username;
   const id = req.body["id"];
   var passwd = "";
