@@ -59,10 +59,13 @@ db.serialize(function() {
   }
 });
 
+app.get("/", function(request, response) {
+  response.sendFile(__dirname + '/views/index.html');
+})
+
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/api", function(request, response) {
   response.send("MyTimetable basic API");
-  //response.sendFile(__dirname + '/views/index.html');
 });
 
 // endpoints list
@@ -361,7 +364,7 @@ app.post("/api/corsi", function(request, response) {
           response.status(500).type('html').send(sql_error).end();
           return console.log(err.message);
         }
-        response.status(201).type('html').send("Aggiunto corso con codice: " + codice).end();
+        response.status(201).type('html').send("Inserito corso con codice: " + codice).end();
         return console.log("A course has been inserted with codice " + codice);
       });
     } else {
@@ -881,7 +884,7 @@ app.put("/api/frequentare/:username", function(req, res) {
               if (err) {
                 console.log("Id associazione: " + id + "inesistente");
                 res
-                  .status(500)
+                  .status(404)
                   .type('html')
                   .send(sql_error + "Id associazione inesistente")
                   .end();
@@ -897,7 +900,7 @@ app.put("/api/frequentare/:username", function(req, res) {
                       "Codice_corso: " + codice_corso + "inesistente"
                     );
                     res
-                      .status(500)
+                      .status(404)
                       .type('html')
                       .send("Codice corso inesistente")
                       .end();
@@ -931,7 +934,7 @@ app.put("/api/frequentare/:username", function(req, res) {
                 });
               } else {
                 res
-                  .status(404)
+                  .status(500)
                   .type('html')
                   .send("Il nuovo codice :" + codice_corso + "è invalido")
                   .end();
@@ -949,12 +952,12 @@ app.put("/api/frequentare/:username", function(req, res) {
         res
           .status(401)
           .set("WWW-Authenticate", "Basic")
-          .send("You need to authenticate in order to access this info")
+          .send("Devi essere autenticato per accedere a queste informazioni")
           .end();
       }
     });
   } else {
-    res.status(400).type('html').send("Username specificato non valido").end();
+    res.status(500).type('html').send("Username specificato non valido").end();
   }
 });
 
@@ -993,7 +996,7 @@ app.delete("/api/frequentare/:username", function(req, res) {
             if (err) {
               console.log("Id associazione: " + id + "inesistente");
               res
-                .status(500)
+                .status(404)
                 .type('html')
                 .send("Id associazione inesistente")
                 .end();
