@@ -1,0 +1,1530 @@
+{
+  "openapi" : "3.0.1",
+  "info" : {
+    "title" : "MyTimetable-API",
+    "description" : "Una semplice API che consente di gestire il proprio orario universitario.",
+    "version" : "0.1"
+  },
+  "servers" : [ {
+    "url" : "https://wobbly-earwig.glitch.me"
+  } ],
+  "paths" : {
+    "/api/utenti" : {
+      "get" : {
+        "tags" : [ "Utenti" ],
+        "description" : "Restituisce l'elenco di tutti gli utenti",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"username\": \"alepistola\",\n  \"nome\": \"Alessandro\",\n  \"cognome\": \"Pistola\",\n  \"password\": \"password\",\n  \"corso_di_studio\": \"Informatica applicata\"\n},\n{\n  \"username\": \"matticingo2\",\n  \"nome\": \"matteo\",\n  \"cognome\": \"cingoli\",\n  \"password\": \"password\",\n  \"corso_di_studio\": \"Beni culturali\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Utenti" ],
+        "description" : "Crea un nuovo utente utilizzando i valori specificati nel body della richiesta",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body"
+              },
+              "examples" : {
+                "0" : {
+                  "value" : "{\n    \"username\": \"nuovo_username\",\n    \"nome\": \"nuovo_nome\",\n    \"cognome\": \"nuovo_cognome\",\n    \"password\":\"password\",\n    \"corso_di_studio\": \"un corso di studio\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Inserito utente {username}"
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Esiste un altro utente con lo stesso username"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/utenti/{username}" : {
+      "get" : {
+        "tags" : [ "Utenti" ],
+        "description" : "Restituisce le informazioni dell'utente con username {username}",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente da ottenere",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"username\": \"alepistola\",\n  \"nome\": \"Alessandro\",\n  \"cognome\": \"Pistola\",\n  \"password\": \"password\",\n  \"corso_di_studio\": \"Informatica applicata\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Utenti" ],
+        "description" : "Auto generated using Swagger Inspector",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente da ottenere",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_1"
+              },
+              "examples" : {
+                "0" : {
+                  "value" : "{\n    \"username\": \"nuovo_username\",\n    \"nome\": \"nuovo_nome\",\n    \"cognome\": \"nuovo_cognome\",\n    \"password\":\"password\",\n    \"corso_di_studio\": \"un corso di studio\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di aggiornamento utente {username} eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Username specificato non valido, controllare la sintassi della richiesta PUT"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  },
+                  "2" : {
+                    "value" : "Errore sql, riprovare. Probabilmente l'username specificato non esiste"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Utenti" ],
+        "description" : "Rimuove l'utente con username {username}",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente da eliminare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di rimozione dell'utente {username} eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Username specificato non valido, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato inesistente, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corsi" : {
+      "get" : {
+        "tags" : [ "Corsi" ],
+        "description" : "Restituisce tutti i corsi universitari",
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"codice\": 123,\n  \"titolo\": \"Piattaforme digitali\",\n  \"descrizione\": \"Descrizione molto dettagliata ma breve del corso di studio\",\n  \"cfu\": 6,\n  \"programma\": \"1-Tante cose 2-Tante cose 3-Ancora tante cose\",\n  \"codice_orario\": 1\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Corsi" ],
+        "description" : "Crea un nuovo corso utilizzando i valori specificati nel body della richiesta",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_2"
+              },
+              "examples" : {
+                "1" : {
+                  "value" : "{\n    \"codice\": 200,\n    \"titolo\": \"titolo corso\",\n    \"descrizione\": \"descrizione corso\",\n    \"cfu\": 6,\n    \"programma\": \"specificare il programma di studi\",\n    \"codice_orario\": 1\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Inserito corso con codice: {codice}"
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Esiste un altro corso con lo stesso codice"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/corsi/{codice}" : {
+      "get" : {
+        "tags" : [ "Corsi" ],
+        "description" : "Restituisce tutte le informazioni del corso con codice {codice}",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice identificativo del corso da visualizzare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_1"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"codice\": 123,\n  \"titolo\": \"Piattaforme digitali\",\n  \"descrizione\": \"Descrizione molto dettagliata ma breve del corso di studio\",\n  \"cfu\": 6,\n  \"programma\": \"1-Tante cose 2-Tante cose 3-Ancora tante cose\",\n  \"codice_orario\": 1\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Corsi" ],
+        "description" : "Modifica il corso con codice {codice} utilizzando i valori specificati nel body della richiesta",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice numerico del corso universitario da modificare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_3"
+              },
+              "examples" : {
+                "0" : {
+                  "value" : "{\n    \"codice\": 201,\n    \"titolo\": \"titolo corso\",\n    \"descrizione\": \"descrizione corso\",\n    \"cfu\": 6,\n    \"programma\": \"specificare il programma di studi\",\n    \"codice_orario\": 1\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di modifica del corso con codice x eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato non valido o inesistente, controllare la sintassi della richiesta PUT"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  },
+                  "2" : {
+                    "value" : "Errore sql, riprovare. Probabilmente il codice specificato non esiste"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Corsi" ],
+        "description" : "Elimina il corso con codice {codice}",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice numerico del corso da eliminare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di rimozione del corso: eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato inesistente, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orari" : {
+      "get" : {
+        "tags" : [ "Orari" ],
+        "description" : "Ottiene l'elenco di tutti gli orari inseriti nel db",
+        "responses" : {
+          "200" : {
+            "description" : "Restituisce tutti gli orari",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_2"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"codice\":\"79\",\n  \"lunedi\":\"11-13\",\n  \"martedi\":\"11-12\",\n  \"mercoledi\":\"-\",\n  \"giovedi\":\"-\",\n  \"venerdi\":\"9-13\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "Orari" ],
+        "description" : "Crea un nuovo orario utilizzando i valori specificati nel body della richiesta",
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_4"
+              },
+              "examples" : {
+                "0" : {
+                  "value" : "{\n    \"codice\":\"77\",\n    \"lunedi\":\"11-13\",\n    \"martedi\":\"11-13\",\n    \"mercoledi\":\"-\",\n    \"giovedi\":\"-\",\n    \"venerdi\":\"9-13\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Inserito orario con codice: {codice}"
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Esiste un altro orario con lo stesso codice"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  },
+                  "2" : {
+                    "value" : "Errore sql, riprovare. Probabilmente il codice specificato già esiste"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orari/{codice}" : {
+      "get" : {
+        "tags" : [ "Orari" ],
+        "description" : "Ottiene l'orario del codice specificato",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice numerico dell'orario da ottenere",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/body_4"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"codice\":\"79\",\n  \"lunedi\":\"11-13\",\n  \"martedi\":\"11-12\",\n  \"mercoledi\":\"-\",\n  \"giovedi\":\"-\",\n  \"venerdi\":\"9-13\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "Orari" ],
+        "description" : "Modifica dell'orario con codice specificato nel path",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice numerico dell'orario da modificare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_5"
+              },
+              "examples" : {
+                "1" : {
+                  "value" : "{\n    \"codice\":\"79\",\n    \"lunedi\":\"11-13\",\n    \"martedi\":\"11-12\",\n    \"mercoledi\":\"-\",\n    \"giovedi\":\"-\",\n    \"venerdi\":\"9-13\"\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di aggiornamento dell'orario x eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato non valido o inesistente, controllare la sintassi della richiesta PUT"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  },
+                  "2" : {
+                    "value" : "Errore sql, riprovare. Probabilmente non esiste nessun orario con il codice x"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "Orari" ],
+        "description" : "Elimina l'orario con codice specificato",
+        "parameters" : [ {
+          "name" : "codice",
+          "in" : "path",
+          "description" : "Codice numerico dell'orario da eliminare",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "integer"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di rimozione dell'orario x eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato non valido o inesistente, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Codice specificato invalido o inesistente"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/frequentare/{username}" : {
+      "get" : {
+        "tags" : [ "Frequentare" ],
+        "description" : "Restituisce (previa autenticazione) l'elenco dei corsi universitari frequentati dall'utente specificato",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente di cui si vogliono visualizzare le associazioni con i corsi universitari",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json; charset=utf-8" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/inline_response_200_3"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "{\n  \"id\": 1,\n  \"username\": \"alepistola\",\n  \"codice_corso\": 923,\n  \"aula\": \"Turing\"\n}"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "basic" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "Frequentare" ],
+        "description" : "Modifica i valore dell'associazione con id {id} e username specificato nel path",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente di cui si vogliono visualizzare le associazioni con i corsi universitari",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_6"
+              },
+              "examples" : {
+                "1" : {
+                  "value" : "{\n    \"codice_corso\":123,\n    \"aula\":\"Turing\",\n    \"id\":3\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di aggiornamento associazione {id} eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Username specificato non valido, controllare la sintassi della richiesta PUT"
+                  }
+                }
+              }
+            }
+          },
+          "401" : {
+            "description" : "Unauthorized",
+            "headers" : {
+              "WWW_Authenticate" : {
+                "style" : "simple",
+                "explode" : false,
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Devi essere autenticato per accedere a queste informazioni"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Username specificato inesistente"
+                  },
+                  "2" : {
+                    "value" : "Id associazione inesistente"
+                  },
+                  "3" : {
+                    "value" : "Codice corso inesistente"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  },
+                  "2" : {
+                    "value" : "Il nuovo codice non è valido"
+                  },
+                  "3" : {
+                    "value" : "Username specificato non valido"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "basic" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "Frequentare" ],
+        "description" : "Crea un'associazione tra l'utente e il corso specificati",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente di cui si vogliono visualizzare le associazioni con i corsi universitari",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/body_7"
+              },
+              "examples" : {
+                "1" : {
+                  "value" : "{\n    \"codice_corso\":123,\n    \"aula\":\"Turing\",\n    \"id\":3\n}"
+                }
+              }
+            }
+          }
+        },
+        "responses" : {
+          "201" : {
+            "description" : "Created",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Inserita associazione tra utente {username} e corso {codice}"
+                  }
+                }
+              }
+            }
+          },
+          "409" : {
+            "description" : "Conflict",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Esiste un'altra associazione con lo stesso id"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "basic" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "Frequentare" ],
+        "description" : "Restituisce l'elenco dei corsi universitari frequentati dall'utente specificato",
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Username dell'utente di cui si vogliono visualizzare le associazioni con i corsi universitari",
+          "required" : true,
+          "style" : "simple",
+          "explode" : false,
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "202" : {
+            "description" : "Accepted",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Operazione di elimina eseguita con successo"
+                  }
+                }
+              }
+            }
+          },
+          "400" : {
+            "description" : "Bad request",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Username specificato non valido, controllare la sintassi della richiesta DELETE"
+                  }
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not found",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare. Probabilmente l'username inserito è inesistente"
+                  },
+                  "2" : {
+                    "value" : "Id associazione inesistente"
+                  }
+                }
+              }
+            }
+          },
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "text/html; charset=utf-8" : {
+                "schema" : {
+                  "type" : "string"
+                },
+                "examples" : {
+                  "1" : {
+                    "value" : "Errore sql, riprovare"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security" : [ {
+          "basic" : [ ]
+        } ]
+      }
+    }
+  },
+  "components" : {
+    "schemas" : {
+      "body_3" : {
+        "type" : "object",
+        "properties" : {
+          "descrizione" : {
+            "type" : "string"
+          },
+          "titolo" : {
+            "type" : "string"
+          },
+          "cfu" : {
+            "type" : "integer"
+          },
+          "codice_orario" : {
+            "type" : "integer"
+          },
+          "codice" : {
+            "type" : "integer"
+          },
+          "programma" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body_4" : {
+        "type" : "object",
+        "properties" : {
+          "giovedi" : {
+            "type" : "string"
+          },
+          "venerdi" : {
+            "type" : "string"
+          },
+          "codice" : {
+            "type" : "string"
+          },
+          "lunedi" : {
+            "type" : "string"
+          },
+          "mercoledi" : {
+            "type" : "string"
+          },
+          "martedi" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body_1" : {
+        "type" : "object",
+        "properties" : {
+          "corso_di_studio" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "cognome" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body_2" : {
+        "type" : "object",
+        "properties" : {
+          "descrizione" : {
+            "type" : "string"
+          },
+          "titolo" : {
+            "type" : "string"
+          },
+          "cfu" : {
+            "type" : "integer"
+          },
+          "codice_orario" : {
+            "type" : "integer"
+          },
+          "codice" : {
+            "type" : "integer"
+          },
+          "programma" : {
+            "type" : "string"
+          }
+        }
+      },
+      "inline_response_200_1" : {
+        "type" : "object",
+        "properties" : {
+          "codice" : {
+            "type" : "integer"
+          },
+          "titolo" : {
+            "type" : "string"
+          },
+          "descrizione" : {
+            "type" : "string"
+          },
+          "cfu" : {
+            "type" : "integer"
+          },
+          "programma" : {
+            "type" : "string"
+          },
+          "codice_orario" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "inline_response_200" : {
+        "type" : "object",
+        "properties" : {
+          "username" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "cognome" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "corso_di_studio" : {
+            "type" : "string"
+          }
+        }
+      },
+      "inline_response_200_2" : {
+        "type" : "object",
+        "properties" : {
+          "giovedi" : {
+            "type" : "string"
+          },
+          "venerdi" : {
+            "type" : "string"
+          },
+          "codice" : {
+            "type" : "string"
+          },
+          "lunedi" : {
+            "type" : "string"
+          },
+          "mercoledi" : {
+            "type" : "string"
+          },
+          "martedi" : {
+            "type" : "string"
+          }
+        }
+      },
+      "inline_response_200_3" : {
+        "type" : "object",
+        "properties" : {
+          "id" : {
+            "type" : "integer"
+          },
+          "username" : {
+            "type" : "string"
+          },
+          "codice_corso" : {
+            "type" : "integer"
+          },
+          "aula" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body" : {
+        "type" : "object",
+        "properties" : {
+          "corso_di_studio" : {
+            "type" : "string"
+          },
+          "password" : {
+            "type" : "string"
+          },
+          "cognome" : {
+            "type" : "string"
+          },
+          "nome" : {
+            "type" : "string"
+          },
+          "username" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body_7" : {
+        "type" : "object",
+        "properties" : {
+          "aula" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "integer"
+          },
+          "codice_corso" : {
+            "type" : "integer"
+          }
+        }
+      },
+      "body_5" : {
+        "type" : "object",
+        "properties" : {
+          "giovedi" : {
+            "type" : "string"
+          },
+          "venerdi" : {
+            "type" : "string"
+          },
+          "codice" : {
+            "type" : "string"
+          },
+          "lunedi" : {
+            "type" : "string"
+          },
+          "mercoledi" : {
+            "type" : "string"
+          },
+          "martedi" : {
+            "type" : "string"
+          }
+        }
+      },
+      "body_6" : {
+        "type" : "object",
+        "properties" : {
+          "aula" : {
+            "type" : "string"
+          },
+          "id" : {
+            "type" : "integer"
+          },
+          "codice_corso" : {
+            "type" : "integer"
+          }
+        }
+      }
+    },
+    "securitySchemes" : {
+      "basic" : {
+        "type" : "http",
+        "scheme" : "basic"
+      }
+    }
+  }
+}
