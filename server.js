@@ -4,9 +4,13 @@
 // init project
 var express = require("express");
 var bodyParser = require("body-parser");
+var cors = require("cors");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./openapi.json');
 //var xmlparser = require('express-xml-bodyparser');
 var app = express();
-app.use(bodyParser.json());//app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json(), cors());//app.use(bodyParser.urlencoded({ extended: true }));
+
 //app.use(xmlparser());
 
 // we've started you off with Express,
@@ -59,13 +63,12 @@ db.serialize(function() {
   }
 });
 
-app.get("/", function(request, response) {
-  response.sendFile(__dirname + '/views/index.html');
-})
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 // http://expressjs.com/en/starter/basic-routing.html
-app.get("/api", function(request, response) {
-  response.send("MyTimetable basic API");
+app.get("/", function(request, response) {
+  response.send("<h1>MyTimetable basic API</h1><p>Look first at the <a href='/api-docs'>docs</a>");
 });
 
 // endpoints list
