@@ -8,10 +8,30 @@
 
 ## Breve descrizione del progetto
 MyTimetable è una semplice API che consente di gestire il proprio orario universitario ed i relativi esami.
+
 ### Struttura del progetto
 [![pdgt.png](https://i.postimg.cc/fk4LFN3x/pdgt.png)](https://postimg.cc/FkZNdwVR)
 
-### Servizio Web con API HTTP ([Glitch - API](https://wobbly-earwig.glitch.me/))
+### Database SqlLite3
+Per garantire la persistenza dei dati si è scelto di utilizzare una database sqlite3 essendo un'opzione prevista da glitch. Di seguito è riportato le schema concettuale del db utilizzato. 
 
-### Scelta della licensa
-Particolare attenzione è stata rivolta alla scelta della licensa. Avendo utilizzato nello sviluppo del client applicativo un template disponibile online ([SB-admin 2](https://blackrockdigital.github.io/startbootstrap-sb-admin-2/)) con licensa MIT, si è deciso di estenderla a tutto il progetto in quanto semplice e permissiva. Ovviamente nella licensa del file è stato aggiunto il riferimento alla licensa del tema utilizzato. Per scegliere la licensa più adeguata ed avere una visione generale sulle license adottabili è stato utilizzato il sito web [choosealicense](https://choosealicense.com/)
+Ad ogni avvio, il server controlla che il database esista, in caso negativo provvede a crearlo, le istruzioni sql utilizzate sono presenti all'interno del file create.sql.
+
+### Servizio Web con API HTTP ([Glitch - API](https://wobbly-earwig.glitch.me/))
+Il servizio web è interamente hostato sul sistema di *Continuous Delivery* glitch.com.
+
+
+L'API raggiungibile dal link nel titolo è composta da 4 endpoint:
+1. utenti : raggiungibile da 2 richieste get (una generale ed una per lo specifico utente *utenti/{username}*) per la visualizzazione e da richieste POST - PUT - DELETE per inserire, modificare, eliminare una determinata istanza.
+2. corsi: raggiungibile da 2 richieste get (una generale ed una per lo specifico corso *corsi/{codice}*) per la visualizzazione e da richieste POST - PUT - DELETE per inserire, modificare, eliminare una determinata istanza.
+3. orari: raggiungibile da 2 richieste get (una generale ed una per lo specifico orario *orari/{codice}*) per la visualizzazione e da richieste POST - PUT - DELETE per inserire, modificare, eliminare una determinata istanza.
+4. frequentare: raggiungibile da richieste GET - POST - PUT - DELETE specificando l'username dell'utente. Tutte le richieste prevedo l'autenticazione dell'utente attraverso l'autenticazione *basic access* fornita dal protocollo http.
+Tutti i dati ricevuti dal server tramite le richieste POST e PUT sono in formato json, viene utilizzata la chiave (specificata inline nell'url) per distinguere le diverse istanze mentre tutti gli altri dati devono essere inviati nel body della richiesta.
+Tutti i dati richiesti al server, tramite le richieste GET, vengono inviati dal server in formato json.
+
+
+Cercando di rispettare il paradigma RESTful, ogni risposta del server contiene il codice di stato HTTP e il tipo di contenuto (text/html oppure application/json) inoltre ogni connessione viene terminata dopo aver inviato la risposta, rispettando la proprietà *stateless* del protocollo http.
+
+### openAPI e documentazione
+### Scelta della licenza
+Particolare attenzione è stata rivolta alla scelta della licenza. Avendo utilizzato nello sviluppo del client applicativo un template disponibile online ([SB-admin 2](https://blackrockdigital.github.io/startbootstrap-sb-admin-2/)) con licenza MIT, si è deciso di estenderla a tutto il progetto in quanto semplice e permissiva. Ovviamente nella licenza del file è stato aggiunto il riferimento alla licenza del tema utilizzato. Per scegliere la licenza più adeguata ed avere una visione generale sulle licenze adottabili è stato utilizzato il sito web [choosealicense](https://choosealicense.com/)
