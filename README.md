@@ -21,6 +21,15 @@ MyTimetable è una semplice API che consente di gestire il proprio orario univer
 Per garantire la persistenza dei dati si è scelto di utilizzare una database sqlite3 essendo un'opzione prevista da glitch. Di seguito è riportato le schema concettuale del db utilizzato. 
 [![pdgt.png](https://github.com/alepistola/MyTimetable/blob/master/img/schemaconcettuale.png)](https://github.com/alepistola/MyTimetable/blob/master/img/schemaconcettuale.png)
 
+Corso(**codice**, titolo, descrizione, cfu, programma, \*__codice_orario__);
+
+Orario(**codice**, lunedi, martedi, mercoledi, giovedi, venerdi);
+
+Utente(**username**, nome, cognome, password, corso_di_studio);
+
+Frequentare(**id**, \*__username__, \*__codice_corso__, aula);
+
+
 Ad ogni avvio, il server controlla che il database esista, in caso negativo provvede a crearlo, le istruzioni sql utilizzate sono presenti all'interno del file create.sql.
 
 ### Servizio Web con API HTTP ([Glitch - API](https://wobbly-earwig.glitch.me/))
