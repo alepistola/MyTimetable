@@ -15,10 +15,11 @@ Progetto per il corso:
 MyTimetable è una semplice API che consente di gestire il proprio orario universitario ed i relativi esami.
 
 ### Struttura del progetto
-[![pdgt.png](https://i.postimg.cc/fk4LFN3x/pdgt.png)](https://postimg.cc/FkZNdwVR)
+[![pdgt.png](https://github.com/alepistola/MyTimetable/blob/master/img/pdgt.png)](https://github.com/alepistola/MyTimetable/blob/master/img/pdgt.png)
 
 ### Database SqlLite3
 Per garantire la persistenza dei dati si è scelto di utilizzare una database sqlite3 essendo un'opzione prevista da glitch. Di seguito è riportato le schema concettuale del db utilizzato. 
+[![pdgt.png](https://github.com/alepistola/MyTimetable/blob/master/img/schemaconcettuale.png)](https://github.com/alepistola/MyTimetable/blob/master/img/schemaconcettuale.png)
 
 Ad ogni avvio, il server controlla che il database esista, in caso negativo provvede a crearlo, le istruzioni sql utilizzate sono presenti all'interno del file create.sql.
 
